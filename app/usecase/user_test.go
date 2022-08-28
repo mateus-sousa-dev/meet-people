@@ -28,6 +28,7 @@ func TestCreateUser(t *testing.T) {
 		ConfirmPassword: "123456",
 		Birthday:        839066400,
 		Gender:          "M",
+		Active:          0,
 	}
 	repo := mocks.NewUserRepositoryMock()
 	useCase := NewUserUseCase(repo)

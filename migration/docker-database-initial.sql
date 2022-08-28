@@ -6,5 +6,6 @@ create table users(
        mobile_number varchar,
        password varchar,
        birthday int,
-       gender varchar
+       gender varchar,
+       active int
 );

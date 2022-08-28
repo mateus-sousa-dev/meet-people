@@ -23,6 +23,7 @@ type User struct {
 	ConfirmPassword string `gorm:"-"`
 	Birthday        int
 	Gender          string
+	Active          int
 }
 
 type UserDto struct {
@@ -46,6 +47,7 @@ func NewUser(userDto UserDto) (*User, error) {
 		ConfirmPassword: userDto.ConfirmPassword,
 		Birthday:        userDto.Birthday,
 		Gender:          userDto.Gender,
+		Active:          0,
 	}
 
 	err := user.Validate()

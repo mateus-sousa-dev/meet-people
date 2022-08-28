@@ -25,6 +25,7 @@ func TestNewUserValid(t *testing.T) {
 		ConfirmPassword: "123456",
 		Birthday:        839066400,
 		Gender:          "M",
+		Active:          0,
 	}
 	user, err := NewUser(userDto)
 	assert.Nil(t, err)

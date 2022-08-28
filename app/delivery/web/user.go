@@ -19,7 +19,12 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&userDto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
 	user, err := u.useCase.CreateUser(userDto)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	c.JSON(http.StatusOK, user)
 }
