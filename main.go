@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/mateus-sousa-dev/meet-people/app"
 
 func main() {
-	fmt.Println("HELLO WORLD")
+	app.StartApplication()
 }
