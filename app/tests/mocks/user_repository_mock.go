@@ -1,6 +1,8 @@
 package mocks
 
-import "github.com/mateus-sousa-dev/meet-people/app/domain"
+import (
+	"github.com/mateus-sousa-dev/meet-people/app/domain"
+)
 
 type UserRepositoryMock struct{}
 
@@ -14,6 +16,14 @@ func (u *UserRepositoryMock) CreateUser(user *domain.User) (*domain.User, error)
 }
 
 func (u *UserRepositoryMock) FindUserByEmail(email string) *domain.User {
+	return nil
+}
+
+func (u *UserRepositoryMock) FindUserByPathAccountActivation(path string) *domain.User {
+	return nil
+}
+
+func (u *UserRepositoryMock) ActivateAccount(user *domain.User) *domain.User {
 	return nil
 }
 
@@ -40,4 +50,12 @@ func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) *domain.U
 		Birthday:        839066400,
 		Gender:          "M",
 	}
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) FindUserByPathAccountActivation(path string) *domain.User {
+	return nil
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) ActivateAccount(user *domain.User) *domain.User {
+	return nil
 }

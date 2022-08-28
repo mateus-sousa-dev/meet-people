@@ -26,3 +26,17 @@ func (u *UserRepository) FindUserByEmail(email string) *domain.User {
 	}
 	return &user
 }
+
+func (u *UserRepository) FindUserByPathAccountActivation(path string) *domain.User {
+	var user domain.User
+	u.db.Where(&domain.User{PathAccountActivation: path}).First(&user)
+	if user.ID == 0 {
+		return nil
+	}
+	return &user
+}
+
+func (u *UserRepository) ActivateAccount(user *domain.User) *domain.User {
+	u.db.Model(&user).UpdateColumns(user)
+	return user
+}

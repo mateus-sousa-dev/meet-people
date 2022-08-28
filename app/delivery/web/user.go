@@ -28,3 +28,13 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, user)
 }
+
+func (u *UserDelivery) ActivateAccount(c *gin.Context) {
+	activationPath := c.Param("activationpath")
+	err := u.useCase.ActivateAccount(activationPath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "account was activated successfully")
+}

@@ -1,8 +1,12 @@
 package domain
 
 import (
+	"crypto/md5"
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
+	"time"
 )
 
 func TestNewUserValid(t *testing.T) {
@@ -17,15 +21,16 @@ func TestNewUserValid(t *testing.T) {
 		Gender:          "M",
 	}
 	expectedUser := &User{
-		FirstName:       "Mateus",
-		LastName:        "Silva",
-		Email:           "mateus@gmail.com",
-		MobileNumber:    "",
-		Password:        "123456",
-		ConfirmPassword: "123456",
-		Birthday:        839066400,
-		Gender:          "M",
-		Active:          0,
+		FirstName:             "Mateus",
+		LastName:              "Silva",
+		Email:                 "mateus@gmail.com",
+		MobileNumber:          "",
+		Password:              "123456",
+		ConfirmPassword:       "123456",
+		Birthday:              839066400,
+		Gender:                "M",
+		Active:                0,
+		PathAccountActivation: fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+"mateus@gmail.com"))),
 	}
 	user, err := NewUser(userDto)
 	assert.Nil(t, err)

@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
+	"os"
 )
 
 type UserUseCase struct {
@@ -27,17 +28,30 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + user.PathAccountActivation
 	mailSender := &domain.MailSender{
-		From:        "no-replu@meetpeople.com",
+		From:        "no-reply@meetpeople.com",
 		To:          user.Email,
 		Subject:     "Link de ativação",
-		ContentType: "text/plain",
-		Body:        "Clique no link para ativar a sua conta: ",
+		ContentType: "text/html",
+		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
 	}
-
 	err = u.mailRepository.SendMail(mailSender)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *UserUseCase) ActivateAccount(path string) error {
+	user := u.repo.FindUserByPathAccountActivation(path)
+	if user == nil {
+		return errors.New("user not found")
+	}
+	err := user.Activate()
+	if err != nil {
+		return err
+	}
+	u.repo.ActivateAccount(user)
+	return nil
 }

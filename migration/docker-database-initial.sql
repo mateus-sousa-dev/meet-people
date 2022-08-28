@@ -7,5 +7,6 @@ create table users(
        password varchar,
        birthday int,
        gender varchar,
-       active int
+       active int,
+       path_account_activation varchar
 );

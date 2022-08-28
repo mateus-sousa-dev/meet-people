@@ -1,29 +1,37 @@
 package domain
 
 import (
+	"crypto/md5"
 	"errors"
+	"fmt"
+	"strconv"
+	"time"
 )
 
 type UserUseCase interface {
 	CreateUser(dto UserDto) (*User, error)
+	ActivateAccount(path string) error
 }
 
 type UserRepository interface {
 	CreateUser(user *User) (*User, error)
 	FindUserByEmail(email string) *User
+	FindUserByPathAccountActivation(path string) *User
+	ActivateAccount(user *User) *User
 }
 
 type User struct {
-	ID              int64
-	FirstName       string
-	LastName        string
-	Email           string
-	MobileNumber    string
-	Password        string
-	ConfirmPassword string `gorm:"-"`
-	Birthday        int
-	Gender          string
-	Active          int
+	ID                    int64
+	FirstName             string
+	LastName              string
+	Email                 string
+	MobileNumber          string
+	Password              string
+	ConfirmPassword       string `gorm:"-"`
+	Birthday              int
+	Gender                string
+	Active                int
+	PathAccountActivation string
 }
 
 type UserDto struct {
@@ -49,12 +57,11 @@ func NewUser(userDto UserDto) (*User, error) {
 		Gender:          userDto.Gender,
 		Active:          0,
 	}
-
 	err := user.Validate()
 	if err != nil {
 		return nil, err
 	}
-
+	user.GeneratePathAccountActivation()
 	return user, nil
 }
 
@@ -80,5 +87,17 @@ func (u *User) Validate() error {
 	if u.Gender == "" {
 		return errors.New("gender is required")
 	}
+	return nil
+}
+
+func (u *User) GeneratePathAccountActivation() {
+	u.PathAccountActivation = fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+u.Email)))
+}
+
+func (u *User) Activate() error {
+	if u.Active == 1 {
+		return errors.New("account already is active")
+	}
+	u.Active = 1
 	return nil
 }
