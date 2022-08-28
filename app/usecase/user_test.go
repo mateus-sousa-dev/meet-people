@@ -31,7 +31,8 @@ func TestCreateUser(t *testing.T) {
 		Active:          0,
 	}
 	repo := mocks.NewUserRepositoryMock()
-	useCase := NewUserUseCase(repo, &mocks.EmailSenderMock{})
+	mailRepo := mocks.NewMailRepositoryMock()
+	useCase := NewUserUseCase(repo, mailRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Nil(t, err)
 	assert.Equal(t, expectedUser, user)
@@ -49,7 +50,8 @@ func TestCreateUserInvalid(t *testing.T) {
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepositoryMock()
-	useCase := NewUserUseCase(repo, &mocks.EmailSenderMock{})
+	mailRepo := mocks.NewMailRepositoryMock()
+	useCase := NewUserUseCase(repo, mailRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "passwords are different", err.Error())
 	assert.Nil(t, user)
@@ -67,7 +69,8 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepoEmailAlreadyExistsMock()
-	useCase := NewUserUseCase(repo, &mocks.EmailSenderMock{})
+	mailRepo := mocks.NewMailRepositoryMock()
+	useCase := NewUserUseCase(repo, mailRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "email already exists", err.Error())
 	assert.Nil(t, user)

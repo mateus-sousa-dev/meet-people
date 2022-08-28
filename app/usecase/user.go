@@ -6,12 +6,12 @@ import (
 )
 
 type UserUseCase struct {
-	repo  domain.UserRepository
-	email domain.Email
+	repo           domain.UserRepository
+	mailRepository domain.MailRepository
 }
 
-func NewUserUseCase(repo domain.UserRepository, email domain.Email) *UserUseCase {
-	return &UserUseCase{repo: repo, email: email}
+func NewUserUseCase(repo domain.UserRepository, mailRepository domain.MailRepository) *UserUseCase {
+	return &UserUseCase{repo: repo, mailRepository: mailRepository}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -27,7 +27,15 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = u.email.SendAccountActivationEmail(user.Email)
+	mailSenderDto := domain.MailSenderDto{
+		From:        "no-replu@meetpeople.com",
+		To:          user.Email,
+		Subject:     "Link de ativação",
+		ContentType: "text/plain",
+		Body:        "Clique no link para ativar a sua conta: ",
+	}
+	emailSender := domain.NewEmailSender(mailSenderDto)
+	err = u.mailRepository.SendMail(emailSender)
 	if err != nil {
 		return nil, err
 	}
