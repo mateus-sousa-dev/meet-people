@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"time"
 )
 
 type UserUseCase interface {
@@ -20,20 +19,20 @@ type User struct {
 	Email           string
 	MobileNumber    string
 	Password        string
-	ConfirmPassword string
-	Birthday        time.Time
+	ConfirmPassword string `gorm:"-"`
+	Birthday        int
 	Gender          string
 }
 
 type UserDto struct {
-	FirstName       string
-	LastName        string
-	Email           string
-	MobileNumber    string
-	Password        string
-	ConfirmPassword string
-	Birthday        int64
-	Gender          string
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Email           string `json:"email"`
+	MobileNumber    string `json:"mobile_number"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+	Birthday        int    `json:"birthday"`
+	Gender          string `json:"gender"`
 }
 
 func NewUser(userDto UserDto) (*User, error) {
@@ -44,7 +43,7 @@ func NewUser(userDto UserDto) (*User, error) {
 		MobileNumber:    userDto.MobileNumber,
 		Password:        userDto.Password,
 		ConfirmPassword: userDto.ConfirmPassword,
-		Birthday:        time.Unix(userDto.Birthday, 0),
+		Birthday:        userDto.Birthday,
 		Gender:          userDto.Gender,
 	}
 
@@ -72,7 +71,7 @@ func (u *User) Validate() error {
 	if u.ConfirmPassword != u.Password {
 		return errors.New("passwords are different")
 	}
-	if u.Birthday.Unix() == 0 {
+	if u.Birthday == 0 {
 		return errors.New("birthday is required")
 	}
 	if u.Gender == "" {

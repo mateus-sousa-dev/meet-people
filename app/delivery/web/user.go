@@ -15,5 +15,11 @@ func NewUserDelivery(useCase domain.UserUseCase) *UserDelivery {
 }
 
 func (u *UserDelivery) CreateUser(c *gin.Context) {
-	c.JSON(http.StatusOK, "OI")
+	var userDto domain.UserDto
+	err := c.ShouldBindJSON(&userDto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "ERRO")
+	}
+	user, err := u.useCase.CreateUser(userDto)
+	c.JSON(http.StatusOK, user)
 }

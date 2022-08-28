@@ -3,7 +3,6 @@ package domain
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"time"
 )
 
 func TestNewUserValid(t *testing.T) {
@@ -24,7 +23,7 @@ func TestNewUserValid(t *testing.T) {
 		MobileNumber:    "",
 		Password:        "123456",
 		ConfirmPassword: "123456",
-		Birthday:        time.Unix(839066400, 0),
+		Birthday:        839066400,
 		Gender:          "M",
 	}
 	user, err := NewUser(userDto)

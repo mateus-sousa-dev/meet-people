@@ -1,12 +1,10 @@
 package usecase
 
 import (
-	"testing"
-	"time"
-
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/tests/mocks"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -28,7 +26,7 @@ func TestCreateUser(t *testing.T) {
 		MobileNumber:    "",
 		Password:        "123456",
 		ConfirmPassword: "123456",
-		Birthday:        time.Unix(839066400, 0),
+		Birthday:        839066400,
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepositoryMock()
