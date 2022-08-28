@@ -6,11 +6,12 @@ import (
 )
 
 type UserUseCase struct {
-	repo domain.UserRepository
+	repo  domain.UserRepository
+	email domain.Email
 }
 
-func NewUserUseCase(repo domain.UserRepository) *UserUseCase {
-	return &UserUseCase{repo: repo}
+func NewUserUseCase(repo domain.UserRepository, email domain.Email) *UserUseCase {
+	return &UserUseCase{repo: repo, email: email}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -23,6 +24,10 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 		return nil, err
 	}
 	user, err = u.repo.CreateUser(user)
+	if err != nil {
+		return nil, err
+	}
+	err = u.email.SendAccountActivationEmail(user.Email)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/mateus-sousa-dev/meet-people/app/delivery/web"
+	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/infra"
 	"github.com/mateus-sousa-dev/meet-people/app/repository"
 	"github.com/mateus-sousa-dev/meet-people/app/usecase"
@@ -20,7 +21,7 @@ func StartApplication() {
 		log.Fatal(err)
 	}
 	userRepository := repository.NewUserRepository(db)
-	userUseCase := usecase.NewUserUseCase(userRepository)
+	userUseCase := usecase.NewUserUseCase(userRepository, &domain.EmailSender{})
 	userDelivery := web.NewUserDelivery(userUseCase)
 	r := gin.Default()
 	apiV1Routes := r.Group("/api/v1")
