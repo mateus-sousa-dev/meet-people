@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/mateus-sousa-dev/meet-people/app/delivery/web"
 	"github.com/mateus-sousa-dev/meet-people/app/infra"
 	"github.com/mateus-sousa-dev/meet-people/app/repository"
@@ -10,6 +11,10 @@ import (
 )
 
 func StartApplication() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
 	db, err := infra.StartConnection()
 	if err != nil {
 		log.Fatal(err)
