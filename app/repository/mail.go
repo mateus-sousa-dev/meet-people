@@ -12,12 +12,12 @@ type MailRepository struct {
 func NewMailRepository(smtpDialer *gomail.Dialer) *MailRepository {
 	return &MailRepository{smtpDialer: smtpDialer}
 }
-func (m *MailRepository) SendMail(emailSender *domain.EmailSender) error {
+func (m *MailRepository) SendMail(mailSender *domain.MailSender) error {
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", emailSender.From)
-	msg.SetHeader("To", emailSender.To)
-	msg.SetHeader("Subject", emailSender.Subject)
-	msg.SetBody(emailSender.ContentType, emailSender.Body)
+	msg.SetHeader("From", mailSender.From)
+	msg.SetHeader("To", mailSender.To)
+	msg.SetHeader("Subject", mailSender.Subject)
+	msg.SetBody(mailSender.ContentType, mailSender.Body)
 	if err := m.smtpDialer.DialAndSend(msg); err != nil {
 		return err
 	}

@@ -1,31 +1,13 @@
 package domain
 
 type MailRepository interface {
-	SendMail(emailSender *EmailSender) error
+	SendMail(emailSender *MailSender) error
 }
 
-type EmailSender struct {
+type MailSender struct {
 	From        string
 	To          string
 	Subject     string
 	ContentType string
 	Body        string
-}
-
-type MailSenderDto struct {
-	From        string
-	To          string
-	Subject     string
-	ContentType string
-	Body        string
-}
-
-func NewEmailSender(mailDto MailSenderDto) *EmailSender {
-	return &EmailSender{
-		From:        mailDto.From,
-		To:          mailDto.To,
-		Subject:     mailDto.Subject,
-		ContentType: mailDto.ContentType,
-		Body:        mailDto.Body,
-	}
 }

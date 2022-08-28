@@ -27,15 +27,15 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	mailSenderDto := domain.MailSenderDto{
+	mailSender := &domain.MailSender{
 		From:        "no-replu@meetpeople.com",
 		To:          user.Email,
 		Subject:     "Link de ativação",
 		ContentType: "text/plain",
 		Body:        "Clique no link para ativar a sua conta: ",
 	}
-	emailSender := domain.NewEmailSender(mailSenderDto)
-	err = u.mailRepository.SendMail(emailSender)
+
+	err = u.mailRepository.SendMail(mailSender)
 	if err != nil {
 		return nil, err
 	}
