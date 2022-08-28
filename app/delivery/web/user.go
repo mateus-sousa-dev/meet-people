@@ -18,7 +18,7 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 	var userDto domain.UserDto
 	err := c.ShouldBindJSON(&userDto)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "ERRO")
+		c.JSON(http.StatusBadRequest, err.Error())
 	}
 	user, err := u.useCase.CreateUser(userDto)
 	c.JSON(http.StatusOK, user)

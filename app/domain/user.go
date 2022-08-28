@@ -10,6 +10,7 @@ type UserUseCase interface {
 
 type UserRepository interface {
 	CreateUser(user *User) (*User, error)
+	FindUserByEmail(email string) *User
 }
 
 type User struct {

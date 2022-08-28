@@ -12,3 +12,32 @@ func (u *UserRepositoryMock) CreateUser(user *domain.User) (*domain.User, error)
 	user.ID = 1
 	return user, nil
 }
+
+func (u *UserRepositoryMock) FindUserByEmail(email string) *domain.User {
+	return nil
+}
+
+type UserRepoEmailAlreadyExistsMock struct{}
+
+func NewUserRepoEmailAlreadyExistsMock() *UserRepoEmailAlreadyExistsMock {
+	return &UserRepoEmailAlreadyExistsMock{}
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) CreateUser(user *domain.User) (*domain.User, error) {
+	user.ID = 1
+	return user, nil
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) *domain.User {
+	return &domain.User{
+		ID:              1,
+		FirstName:       "Mateus",
+		LastName:        "Silva",
+		Email:           "mateus@gmail.com",
+		MobileNumber:    "",
+		Password:        "123456",
+		ConfirmPassword: "123456",
+		Birthday:        839066400,
+		Gender:          "M",
+	}
+}
