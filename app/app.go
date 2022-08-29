@@ -7,6 +7,9 @@ import (
 	"github.com/mateus-sousa-dev/meet-people/app/infra"
 	"github.com/mateus-sousa-dev/meet-people/app/repository"
 	"github.com/mateus-sousa-dev/meet-people/app/usecase"
+	docs "github.com/mateus-sousa-dev/meet-people/docs"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 )
 
@@ -28,6 +31,8 @@ func StartApplication() {
 	userUseCase := usecase.NewUserUseCase(userRepository, mailRepository)
 	userDelivery := web.NewUserDelivery(userUseCase)
 	r := gin.Default()
+	docs.SwaggerInfo.BasePath = "/"
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	apiV1Routes := r.Group("/api/v1")
 	apiV1Routes.POST("/users", userDelivery.CreateUser)
 	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
