@@ -30,6 +30,6 @@ func StartApplication() {
 	r := gin.Default()
 	apiV1Routes := r.Group("/api/v1")
 	apiV1Routes.POST("/users", userDelivery.CreateUser)
-	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActiveAccount)
+	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
 	r.Run()
 }
