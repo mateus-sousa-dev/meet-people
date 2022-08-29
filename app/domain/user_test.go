@@ -51,7 +51,7 @@ func TestNewUserWithoutFirstName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "first name is required", err.Error())
+	assert.Equal(t, "FirstName: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutLastName(t *testing.T) {
@@ -68,7 +68,7 @@ func TestNewUserWithoutLastName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "last name is required", err.Error())
+	assert.Equal(t, "LastName: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutEmail(t *testing.T) {
@@ -85,7 +85,7 @@ func TestNewUserWithoutEmail(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "email is required", err.Error())
+	assert.Equal(t, "Email: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutPassword(t *testing.T) {
@@ -102,7 +102,7 @@ func TestNewUserWithoutPassword(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "password is required", err.Error())
+	assert.Equal(t, "Password: Missing required field", err.Error())
 }
 
 func TestNewUserDifferentPasswords(t *testing.T) {
@@ -119,7 +119,7 @@ func TestNewUserDifferentPasswords(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "passwords are different", err.Error())
+	assert.Equal(t, "ConfirmPassword: Should be equal to the Password field", err.Error())
 }
 
 func TestNewUserWithoutBirthday(t *testing.T) {
@@ -136,7 +136,7 @@ func TestNewUserWithoutBirthday(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "birthday is required", err.Error())
+	assert.Equal(t, "Birthday: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutGender(t *testing.T) {
@@ -153,5 +153,5 @@ func TestNewUserWithoutGender(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "gender is required", err.Error())
+	assert.Equal(t, "Gender: Missing required field", err.Error())
 }

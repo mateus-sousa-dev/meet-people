@@ -58,7 +58,7 @@ func TestCreateUserInvalid(t *testing.T) {
 	mailRepo := mocks.NewMailRepositoryMock()
 	useCase := NewUserUseCase(repo, mailRepo)
 	user, err := useCase.CreateUser(userDto)
-	assert.Equal(t, "passwords are different", err.Error())
+	assert.Equal(t, "ConfirmPassword: Should be equal to the Password field", err.Error())
 	assert.Nil(t, user)
 }
 

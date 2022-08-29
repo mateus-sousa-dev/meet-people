@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"github.com/asaskevich/govalidator"
 	"strconv"
 	"time"
 )
@@ -21,17 +22,17 @@ type UserRepository interface {
 }
 
 type User struct {
-	ID                    int64
-	FirstName             string
-	LastName              string
-	Email                 string
-	MobileNumber          string
-	Password              string
-	ConfirmPassword       string `gorm:"-"`
-	Birthday              int
-	Gender                string
-	Active                int
-	PathAccountActivation string
+	ID                    int64  `valid:"-"`
+	FirstName             string `valid:"notnull"`
+	LastName              string `valid:"notnull"`
+	Email                 string `valid:"notnull"`
+	MobileNumber          string `valid:"-"`
+	Password              string `valid:"notnull"`
+	ConfirmPassword       string `gorm:"-" valid:"notnull"`
+	Birthday              int    `valid:"-"`
+	Gender                string `valid:"notnull"`
+	Active                int    `valid:"-"`
+	PathAccountActivation string `valid:"-"`
 }
 
 type UserDto struct {
@@ -43,6 +44,10 @@ type UserDto struct {
 	ConfirmPassword string `json:"confirm_password"`
 	Birthday        int    `json:"birthday"`
 	Gender          string `json:"gender"`
+}
+
+func init() {
+	govalidator.SetFieldsRequiredByDefault(true)
 }
 
 func NewUser(userDto UserDto) (*User, error) {
@@ -66,26 +71,15 @@ func NewUser(userDto UserDto) (*User, error) {
 }
 
 func (u *User) Validate() error {
-	if u.FirstName == "" {
-		return errors.New("first name is required")
-	}
-	if u.LastName == "" {
-		return errors.New("last name is required")
-	}
-	if u.Email == "" {
-		return errors.New("email is required")
-	}
-	if u.Password == "" {
-		return errors.New("password is required")
-	}
-	if u.ConfirmPassword != u.Password {
-		return errors.New("passwords are different")
+	_, err := govalidator.ValidateStruct(u)
+	if err != nil {
+		return err
 	}
 	if u.Birthday == 0 {
-		return errors.New("birthday is required")
+		return errors.New("Birthday: Missing required field")
 	}
-	if u.Gender == "" {
-		return errors.New("gender is required")
+	if u.ConfirmPassword != u.Password {
+		return errors.New("ConfirmPassword: Should be equal to the Password field")
 	}
 	return nil
 }
