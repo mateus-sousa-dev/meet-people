@@ -1,0 +1,75 @@
+definitions:
+  domain.User:
+    properties:
+      active:
+        type: integer
+      birthday:
+        type: integer
+      confirmPassword:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      mobileNumber:
+        type: string
+      password:
+        type: string
+      pathAccountActivation:
+        type: string
+    type: object
+  domain.UserDto:
+    properties:
+      birthday:
+        type: integer
+      confirm_password:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      last_name:
+        type: string
+      mobile_number:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Meet People aims to replicate facebook features
+  title: Meet People
+  version: 0.1.0
+paths:
+  /api/v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Route to create a new user
+      parameters:
+      - description: Modelo de usuário
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+      summary: Create a user
+      tags:
+      - Users
+swagger: "2.0"

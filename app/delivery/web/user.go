@@ -14,6 +14,15 @@ func NewUserDelivery(useCase domain.UserUseCase) *UserDelivery {
 	return &UserDelivery{useCase: useCase}
 }
 
+// CreateUser godoc
+// @Summary Create a user
+// @Description Route to create a new user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user body domain.UserDto true "Modelo de usuário"
+// @Success 201 {object} domain.User
+// @Router /api/v1/users [post]
 func (u *UserDelivery) CreateUser(c *gin.Context) {
 	var userDto domain.UserDto
 	err := c.ShouldBindJSON(&userDto)
@@ -26,7 +35,7 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusCreated, user)
 }
 
 func (u *UserDelivery) ActivateAccount(c *gin.Context) {
