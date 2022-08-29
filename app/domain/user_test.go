@@ -51,7 +51,7 @@ func TestNewUserWithoutFirstName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "FirstName: Missing required field", err.Error())
+	assert.Equal(t, "first_name: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutLastName(t *testing.T) {
@@ -68,7 +68,7 @@ func TestNewUserWithoutLastName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "LastName: Missing required field", err.Error())
+	assert.Equal(t, "last_name: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutEmail(t *testing.T) {
@@ -85,7 +85,7 @@ func TestNewUserWithoutEmail(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "Email: Missing required field", err.Error())
+	assert.Equal(t, "email: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutPassword(t *testing.T) {
@@ -153,5 +153,5 @@ func TestNewUserWithoutGender(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "Gender: Missing required field", err.Error())
+	assert.Equal(t, "gender: Missing required field", err.Error())
 }

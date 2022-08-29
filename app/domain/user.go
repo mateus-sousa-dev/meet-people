@@ -22,17 +22,20 @@ type UserRepository interface {
 }
 
 type User struct {
-	ID                    int64  `valid:"-"`
-	FirstName             string `valid:"notnull"`
-	LastName              string `valid:"notnull"`
-	Email                 string `valid:"notnull"`
-	MobileNumber          string `valid:"-"`
-	Password              string `valid:"notnull"`
-	ConfirmPassword       string `gorm:"-" valid:"notnull"`
-	Birthday              int    `valid:"-"`
-	Gender                string `valid:"notnull"`
-	Active                int    `valid:"-"`
-	PathAccountActivation string `valid:"-"`
+	ID                    int64  `json:"id" valid:"-"`
+	FirstName             string `json:"first_name" valid:"notnull"`
+	LastName              string `json:"last_name" valid:"notnull"`
+	Email                 string `json:"email" valid:"notnull"`
+	MobileNumber          string `json:"mobile_number" valid:"-"`
+	Password              string `json:"-" valid:"notnull"`
+	ConfirmPassword       string `json:"-" gorm:"-" valid:"notnull"`
+	Birthday              int    `json:"birthday" valid:"-"`
+	Gender                string `json:"gender" valid:"notnull"`
+	Active                int    `json:"active" valid:"-"`
+	PathAccountActivation string `json:"-" valid:"-"`
+	CreatedAt             int    `json:"-" valid:"-"`
+	UpdatedAt             int    `json:"-" valid:"-"`
+	DeletedAt             int    `json:"-" valid:"-"`
 }
 
 type UserDto struct {
