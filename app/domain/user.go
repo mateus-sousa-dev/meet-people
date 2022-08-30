@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/asaskevich/govalidator"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
 )
@@ -54,12 +55,20 @@ func init() {
 }
 
 func NewUser(userDto UserDto) (*User, error) {
+	password := ""
+	if userDto.Password != "" {
+		hash, err := bcrypt.GenerateFromPassword([]byte(userDto.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		password = string(hash)
+	}
 	user := &User{
 		FirstName:       userDto.FirstName,
 		LastName:        userDto.LastName,
 		Email:           userDto.Email,
 		MobileNumber:    userDto.MobileNumber,
-		Password:        userDto.Password,
+		Password:        password,
 		ConfirmPassword: userDto.ConfirmPassword,
 		Birthday:        userDto.Birthday,
 		Gender:          userDto.Gender,
@@ -81,7 +90,7 @@ func (u *User) Validate() error {
 	if u.Birthday == 0 {
 		return errors.New("Birthday: Missing required field")
 	}
-	if u.ConfirmPassword != u.Password {
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(u.ConfirmPassword)); err != nil {
 		return errors.New("ConfirmPassword: Should be equal to the Password field")
 	}
 	return nil
