@@ -26,7 +26,7 @@ type User struct {
 	ID                    int64  `json:"id" valid:"-"`
 	FirstName             string `json:"first_name" valid:"notnull"`
 	LastName              string `json:"last_name" valid:"notnull"`
-	Email                 string `json:"email" valid:"notnull"`
+	Email                 string `json:"email" valid:"email"`
 	MobileNumber          string `json:"mobile_number" valid:"-"`
 	Password              string `json:"-" valid:"notnull"`
 	ConfirmPassword       string `json:"-" gorm:"-" valid:"notnull"`

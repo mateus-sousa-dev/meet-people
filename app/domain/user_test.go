@@ -87,6 +87,23 @@ func TestNewUserWithoutEmail(t *testing.T) {
 	assert.Equal(t, "email: Missing required field", err.Error())
 }
 
+func TestNewUserInvalidEmail(t *testing.T) {
+	userDto := UserDto{
+		FirstName:       "Mateus",
+		LastName:        "Silva",
+		Email:           "invalid email",
+		MobileNumber:    "",
+		Password:        "123456",
+		ConfirmPassword: "123456",
+		Birthday:        839066400,
+		Gender:          "M",
+	}
+
+	_, err := NewUser(userDto)
+	assert.NotNil(t, err)
+	assert.Equal(t, "email: invalid email does not validate as email", err.Error())
+}
+
 func TestNewUserWithoutPassword(t *testing.T) {
 	userDto := UserDto{
 		FirstName:       "Mateus",

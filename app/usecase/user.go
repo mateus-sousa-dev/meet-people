@@ -5,6 +5,7 @@ import (
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/internal"
 	"os"
+	"strings"
 )
 
 type UserUseCase struct {
@@ -21,7 +22,11 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if user != nil {
 		return nil, errors.New("email already exists")
 	}
-	user, err := domain.NewUser(userDto)
+	err := u.validatePasswordStrength(userDto.Password)
+	if err != nil {
+		return nil, err
+	}
+	user, err = domain.NewUser(userDto)
 	if err != nil {
 		return nil, err
 	}
@@ -57,5 +62,18 @@ func (u *UserUseCase) ActivateAccount(path string) error {
 		return err
 	}
 	u.repo.ActivateAccount(user)
+	return nil
+}
+
+func (u *UserUseCase) validatePasswordStrength(password string) error {
+	if len(password) < 8 {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToLower(password) == password {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToUpper(password) == password {
+		return errors.New("password is not strong enough")
+	}
 	return nil
 }
