@@ -34,9 +34,9 @@ type User struct {
 	Gender                string `json:"gender" valid:"notnull"`
 	Active                int    `json:"active" valid:"-"`
 	PathAccountActivation string `json:"-" valid:"-"`
-	CreatedAt             int    `json:"-" valid:"-"`
-	UpdatedAt             int    `json:"-" valid:"-"`
-	DeletedAt             int    `json:"-" valid:"-"`
+	CreatedAt             *int64 `json:"-" valid:"-"`
+	UpdatedAt             *int64 `json:"-" valid:"-"`
+	DeletedAt             *int64 `json:"-" valid:"-"`
 }
 
 type UserDto struct {

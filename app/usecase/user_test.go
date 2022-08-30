@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
+	"github.com/mateus-sousa-dev/meet-people/app/internal"
 	"github.com/mateus-sousa-dev/meet-people/app/tests/mocks"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
@@ -35,6 +36,8 @@ func TestCreateUser(t *testing.T) {
 	assert.Equal(t, 839066400, user.Birthday)
 	assert.Equal(t, "M", user.Gender)
 	assert.Equal(t, 0, user.Active)
+	timeNow := internal.Now().UTC().Unix()
+	assert.Equal(t, &timeNow, user.CreatedAt)
 	assert.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+"mateus@gmail.com"))), user.PathAccountActivation)
 	assert.Equal(t, "123456", user.ConfirmPassword)
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("123456"))

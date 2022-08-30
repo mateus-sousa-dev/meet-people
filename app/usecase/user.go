@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
+	"github.com/mateus-sousa-dev/meet-people/app/internal"
 	"os"
 )
 
@@ -24,6 +25,9 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	timeNow := internal.Now().UTC().Unix()
+	user.CreatedAt = &timeNow
+	user.UpdatedAt = &timeNow
 	user, err = u.repo.CreateUser(user)
 	if err != nil {
 		return nil, err
