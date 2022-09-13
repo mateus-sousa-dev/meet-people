@@ -9,12 +9,13 @@ import (
 )
 
 type UserUseCase struct {
-	repo           domain.UserRepository
-	mailRepository domain.MailRepository
+	repo            domain.UserRepository
+	mailRepository  domain.MailRepository
+	eventRepository domain.EventRepository
 }
 
-func NewUserUseCase(repo domain.UserRepository, mailRepository domain.MailRepository) *UserUseCase {
-	return &UserUseCase{repo: repo, mailRepository: mailRepository}
+func NewUserUseCase(repo domain.UserRepository, mailRepository domain.MailRepository, eventRepository domain.EventRepository) *UserUseCase {
+	return &UserUseCase{repo: repo, mailRepository: mailRepository, eventRepository: eventRepository}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -37,6 +38,18 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = u.sendMailActivationUrl(user)
+	if err != nil {
+		return user, err
+	}
+	//err = u.eventRepository.PublishEvent("teste")
+	//if err != nil {
+	//	return nil, err
+	//}
+	return user, nil
+}
+
+func (u *UserUseCase) sendMailActivationUrl(user *domain.User) error {
 	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + user.PathAccountActivation
 	mailSender := &domain.MailSender{
 		From:        "no-reply@meetpeople.com",
@@ -45,11 +58,11 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 		ContentType: "text/html",
 		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
 	}
-	err = u.mailRepository.SendMail(mailSender)
+	err := u.mailRepository.SendMail(mailSender)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return user, nil
+	return nil
 }
 
 func (u *UserUseCase) ActivateAccount(path string) error {
