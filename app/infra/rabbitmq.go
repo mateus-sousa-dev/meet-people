@@ -25,17 +25,36 @@ func StartRabbitMQ() (*amqp.Channel, error) {
 		return nil, err
 	}
 
-	q, err := ch.QueueDeclare("email", true, false, false, false, nil)
+	q, err := ch.QueueDeclare(
+		os.Getenv("RABBITMQ_QUEUE_NAME"),
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	err = ch.ExchangeDeclare("meet-people", "direct", true, false, false, false, nil)
+	err = ch.ExchangeDeclare(os.Getenv("RABBITMQ_EXCHANGE_NAME"),
+		os.Getenv("RABBITMQ_EXCHANGE_KIND"),
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	err = ch.QueueBind(q.Name, "email", "meet-people", false, nil)
+	err = ch.QueueBind(q.Name,
+		os.Getenv("RABBITMQ_EXCHANGE_KEY"),
+		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
+		false,
+		nil,
+	)
 	if err != nil {
 		return nil, err
 	}

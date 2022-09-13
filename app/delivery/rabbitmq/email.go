@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/streadway/amqp"
+	"os"
 )
 
 type EmailDelivery struct {
@@ -18,7 +19,15 @@ func NewEmailDelivery(ch *amqp.Channel, emailUseCase domain.EmailUseCase) *Email
 }
 
 func (d *EmailDelivery) StartConsume() error {
-	msgs, err := d.rabbitmqChannel.Consume("email", "", true, false, false, false, nil)
+	msgs, err := d.rabbitmqChannel.Consume(
+		os.Getenv("RABBITMQ_QUEUE_NAME"),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
 	if err != nil {
 		return err
 	}
@@ -31,6 +40,9 @@ func (d *EmailDelivery) StartConsume() error {
 		if err != nil {
 			err = msg.Nack(true, true)
 		}
+		err = msg.Ack(true)
+		if err != nil {
+			return err
+		}
 	}
-	return nil
 }
