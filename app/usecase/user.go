@@ -2,17 +2,19 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
-	"os"
+	"github.com/mateus-sousa-dev/meet-people/app/internal"
+	"strings"
 )
 
 type UserUseCase struct {
-	repo           domain.UserRepository
-	mailRepository domain.MailRepository
+	repo            domain.UserRepository
+	eventRepository domain.EventRepository
 }
 
-func NewUserUseCase(repo domain.UserRepository, mailRepository domain.MailRepository) *UserUseCase {
-	return &UserUseCase{repo: repo, mailRepository: mailRepository}
+func NewUserUseCase(repo domain.UserRepository, eventRepository domain.EventRepository) *UserUseCase {
+	return &UserUseCase{repo: repo, eventRepository: eventRepository}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -20,23 +22,23 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if user != nil {
 		return nil, errors.New("email already exists")
 	}
-	user, err := domain.NewUser(userDto)
+	err := u.validatePasswordStrength(userDto.Password)
 	if err != nil {
 		return nil, err
 	}
+	user, err = domain.NewUser(userDto)
+	if err != nil {
+		return nil, err
+	}
+	timeNow := internal.Now().UTC().Unix()
+	user.CreatedAt = &timeNow
+	user.UpdatedAt = &timeNow
 	user, err = u.repo.CreateUser(user)
 	if err != nil {
 		return nil, err
 	}
-	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + user.PathAccountActivation
-	mailSender := &domain.MailSender{
-		From:        "no-reply@meetpeople.com",
-		To:          user.Email,
-		Subject:     "Link de ativação",
-		ContentType: "text/html",
-		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
-	}
-	err = u.mailRepository.SendMail(mailSender)
+	bodyEvent := fmt.Sprintf("{ \"email\":\"%s\", \"urlAccountActivation\":\"%s\"}", user.Email, user.PathAccountActivation)
+	err = u.eventRepository.PublishEvent(bodyEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -53,5 +55,18 @@ func (u *UserUseCase) ActivateAccount(path string) error {
 		return err
 	}
 	u.repo.ActivateAccount(user)
+	return nil
+}
+
+func (u *UserUseCase) validatePasswordStrength(password string) error {
+	if len(password) < 8 {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToLower(password) == password {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToUpper(password) == password {
+		return errors.New("password is not strong enough")
+	}
 	return nil
 }

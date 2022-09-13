@@ -14,7 +14,10 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (u *UserRepository) CreateUser(user *domain.User) (*domain.User, error) {
-	u.db.Create(user)
+	tx := u.db.Create(user)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
 	return user, nil
 }
 

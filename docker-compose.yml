@@ -1,5 +1,14 @@
 version: '3'
 services:
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: misere
+      RABBITMQ_DEFAULT_PASS: '123456'
+      RABBITMQ_DEFAULT_VHOST: /
   postgres:
     image: "postgres"
     environment:
@@ -10,7 +19,6 @@ services:
       - "5432:5432"
     volumes:
       - ./migration/docker-database-initial.sql:/docker-entrypoint-initdb.d/docker-database-initial.sql
-
   pgadmin-compose:
     image: dpage/pgadmin4
     environment:

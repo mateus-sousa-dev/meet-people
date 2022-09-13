@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/asaskevich/govalidator"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
 )
@@ -22,17 +23,20 @@ type UserRepository interface {
 }
 
 type User struct {
-	ID                    int64  `valid:"-"`
-	FirstName             string `valid:"notnull"`
-	LastName              string `valid:"notnull"`
-	Email                 string `valid:"notnull"`
-	MobileNumber          string `valid:"-"`
-	Password              string `valid:"notnull"`
-	ConfirmPassword       string `gorm:"-" valid:"notnull"`
-	Birthday              int    `valid:"-"`
-	Gender                string `valid:"notnull"`
-	Active                int    `valid:"-"`
-	PathAccountActivation string `valid:"-"`
+	ID                    int64  `json:"id" valid:"-"`
+	FirstName             string `json:"first_name" valid:"notnull"`
+	LastName              string `json:"last_name" valid:"notnull"`
+	Email                 string `json:"email" valid:"email"`
+	MobileNumber          string `json:"mobile_number" valid:"-"`
+	Password              string `json:"-" valid:"notnull"`
+	ConfirmPassword       string `json:"-" gorm:"-" valid:"notnull"`
+	Birthday              int    `json:"birthday" valid:"-"`
+	Gender                string `json:"gender" valid:"notnull"`
+	Active                int    `json:"active" valid:"-"`
+	PathAccountActivation string `json:"-" valid:"-"`
+	CreatedAt             *int64 `json:"-" valid:"-"`
+	UpdatedAt             *int64 `json:"-" valid:"-"`
+	DeletedAt             *int64 `json:"-" valid:"-"`
 }
 
 type UserDto struct {
@@ -51,12 +55,20 @@ func init() {
 }
 
 func NewUser(userDto UserDto) (*User, error) {
+	password := ""
+	if userDto.Password != "" {
+		hash, err := bcrypt.GenerateFromPassword([]byte(userDto.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		password = string(hash)
+	}
 	user := &User{
 		FirstName:       userDto.FirstName,
 		LastName:        userDto.LastName,
 		Email:           userDto.Email,
 		MobileNumber:    userDto.MobileNumber,
-		Password:        userDto.Password,
+		Password:        password,
 		ConfirmPassword: userDto.ConfirmPassword,
 		Birthday:        userDto.Birthday,
 		Gender:          userDto.Gender,
@@ -78,7 +90,7 @@ func (u *User) Validate() error {
 	if u.Birthday == 0 {
 		return errors.New("Birthday: Missing required field")
 	}
-	if u.ConfirmPassword != u.Password {
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(u.ConfirmPassword)); err != nil {
 		return errors.New("ConfirmPassword: Should be equal to the Password field")
 	}
 	return nil

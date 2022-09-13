@@ -8,5 +8,8 @@ create table users(
        birthday int,
        gender varchar,
        active int,
-       path_account_activation varchar
+       path_account_activation varchar,
+       created_at int,
+       updated_at int,
+       deleted_at int
 );

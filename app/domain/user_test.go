@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"testing"
 	"time"
@@ -20,21 +21,19 @@ func TestNewUserValid(t *testing.T) {
 		Birthday:        839066400,
 		Gender:          "M",
 	}
-	expectedUser := &User{
-		FirstName:             "Mateus",
-		LastName:              "Silva",
-		Email:                 "mateus@gmail.com",
-		MobileNumber:          "",
-		Password:              "123456",
-		ConfirmPassword:       "123456",
-		Birthday:              839066400,
-		Gender:                "M",
-		Active:                0,
-		PathAccountActivation: fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+"mateus@gmail.com"))),
-	}
 	user, err := NewUser(userDto)
 	assert.Nil(t, err)
-	assert.Equal(t, expectedUser, user)
+	assert.Equal(t, "Mateus", user.FirstName)
+	assert.Equal(t, "Silva", user.LastName)
+	assert.Equal(t, "mateus@gmail.com", user.Email)
+	assert.Equal(t, "", user.MobileNumber)
+	assert.Equal(t, 839066400, user.Birthday)
+	assert.Equal(t, "M", user.Gender)
+	assert.Equal(t, 0, user.Active)
+	assert.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+"mateus@gmail.com"))), user.PathAccountActivation)
+	assert.Equal(t, "123456", user.ConfirmPassword)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("123456"))
+	assert.Nil(t, err)
 }
 
 func TestNewUserWithoutFirstName(t *testing.T) {
@@ -51,7 +50,7 @@ func TestNewUserWithoutFirstName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "FirstName: Missing required field", err.Error())
+	assert.Equal(t, "first_name: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutLastName(t *testing.T) {
@@ -68,7 +67,7 @@ func TestNewUserWithoutLastName(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "LastName: Missing required field", err.Error())
+	assert.Equal(t, "last_name: Missing required field", err.Error())
 }
 
 func TestNewUserWithoutEmail(t *testing.T) {
@@ -85,7 +84,24 @@ func TestNewUserWithoutEmail(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "Email: Missing required field", err.Error())
+	assert.Equal(t, "email: Missing required field", err.Error())
+}
+
+func TestNewUserInvalidEmail(t *testing.T) {
+	userDto := UserDto{
+		FirstName:       "Mateus",
+		LastName:        "Silva",
+		Email:           "invalid email",
+		MobileNumber:    "",
+		Password:        "123456",
+		ConfirmPassword: "123456",
+		Birthday:        839066400,
+		Gender:          "M",
+	}
+
+	_, err := NewUser(userDto)
+	assert.NotNil(t, err)
+	assert.Equal(t, "email: invalid email does not validate as email", err.Error())
 }
 
 func TestNewUserWithoutPassword(t *testing.T) {
@@ -153,5 +169,5 @@ func TestNewUserWithoutGender(t *testing.T) {
 
 	_, err := NewUser(userDto)
 	assert.NotNil(t, err)
-	assert.Equal(t, "Gender: Missing required field", err.Error())
+	assert.Equal(t, "gender: Missing required field", err.Error())
 }
