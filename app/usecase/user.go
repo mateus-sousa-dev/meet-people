@@ -2,20 +2,19 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/internal"
-	"os"
 	"strings"
 )
 
 type UserUseCase struct {
 	repo            domain.UserRepository
-	mailRepository  domain.MailRepository
 	eventRepository domain.EventRepository
 }
 
-func NewUserUseCase(repo domain.UserRepository, mailRepository domain.MailRepository, eventRepository domain.EventRepository) *UserUseCase {
-	return &UserUseCase{repo: repo, mailRepository: mailRepository, eventRepository: eventRepository}
+func NewUserUseCase(repo domain.UserRepository, eventRepository domain.EventRepository) *UserUseCase {
+	return &UserUseCase{repo: repo, eventRepository: eventRepository}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -38,31 +37,12 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = u.sendMailActivationUrl(user)
+	bodyEvent := fmt.Sprintf("{ \"email\":\"%s\", \"urlAccountActivation\":\"%s\"}", user.Email, user.PathAccountActivation)
+	err = u.eventRepository.PublishEvent(bodyEvent)
 	if err != nil {
-		return user, err
+		return nil, err
 	}
-	//err = u.eventRepository.PublishEvent("teste")
-	//if err != nil {
-	//	return nil, err
-	//}
 	return user, nil
-}
-
-func (u *UserUseCase) sendMailActivationUrl(user *domain.User) error {
-	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + user.PathAccountActivation
-	mailSender := &domain.MailSender{
-		From:        "no-reply@meetpeople.com",
-		To:          user.Email,
-		Subject:     "Link de ativação",
-		ContentType: "text/html",
-		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
-	}
-	err := u.mailRepository.SendMail(mailSender)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (u *UserUseCase) ActivateAccount(path string) error {

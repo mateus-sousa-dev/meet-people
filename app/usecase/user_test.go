@@ -25,8 +25,8 @@ func TestCreateUser(t *testing.T) {
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Nil(t, err)
 	assert.Equal(t, "Mateus", user.FirstName)
@@ -56,8 +56,8 @@ func TestCreateUserInvalid(t *testing.T) {
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "ConfirmPassword: Should be equal to the Password field", err.Error())
 	assert.Nil(t, user)
@@ -75,8 +75,8 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 		Gender:          "M",
 	}
 	repo := mocks.NewUserRepoEmailAlreadyExistsMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "email already exists", err.Error())
 	assert.Nil(t, user)
@@ -85,8 +85,8 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 func TestValidatePasswordStrengthShort(t *testing.T) {
 	password := "Ab14725"
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -94,8 +94,8 @@ func TestValidatePasswordStrengthShort(t *testing.T) {
 func TestValidatePasswordStrengthNotUpper(t *testing.T) {
 	password := "abcd147258369"
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -103,8 +103,8 @@ func TestValidatePasswordStrengthNotUpper(t *testing.T) {
 func TestValidatePasswordStrengthNotLower(t *testing.T) {
 	password := "ABCD147258369"
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -112,8 +112,8 @@ func TestValidatePasswordStrengthNotLower(t *testing.T) {
 func TestValidatePasswordStrengthValid(t *testing.T) {
 	password := "AbCd147258369"
 	repo := mocks.NewUserRepositoryMock()
-	mailRepo := mocks.NewMailRepositoryMock()
-	useCase := NewUserUseCase(repo, mailRepo)
+	eventRepo := mocks.NewEventRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Nil(t, err)
 }

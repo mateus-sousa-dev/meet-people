@@ -42,7 +42,7 @@ func StartApplication() {
 	}()
 	userRepository := repository.NewUserRepository(db)
 	eventRepository := repository.NewEventRepository(rabbitmqChannel)
-	userUseCase := usecase.NewUserUseCase(userRepository, mailRepository, eventRepository)
+	userUseCase := usecase.NewUserUseCase(userRepository, eventRepository)
 	userDelivery := web.NewUserDelivery(userUseCase)
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
