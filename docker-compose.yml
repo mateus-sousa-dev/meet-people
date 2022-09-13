@@ -1,7 +1,7 @@
 version: '3'
 services:
-  rabbitmq:
-    image: rabbitmq:3.7-management
+  queue:
+    image: "rabbitmq:3.7-management"
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -9,7 +9,9 @@ services:
       RABBITMQ_DEFAULT_USER: misere
       RABBITMQ_DEFAULT_PASS: '123456'
       RABBITMQ_DEFAULT_VHOST: /
-  postgres:
+    networks:
+      - back
+  db:
     image: "postgres"
     environment:
       - POSTGRES_USER=root
@@ -19,6 +21,8 @@ services:
       - "5432:5432"
     volumes:
       - ./migration/docker-database-initial.sql:/docker-entrypoint-initdb.d/docker-database-initial.sql
+    networks:
+      - back
   pgadmin-compose:
     image: dpage/pgadmin4
     environment:
@@ -27,5 +31,40 @@ services:
     ports:
       - "54321:80"
     depends_on:
-      - postgres
-
+      - db
+    networks:
+      - back
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      APP_URL: "http://localhost:8080/api/v1"
+      DB_HOST: "db"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "root"
+      DB_PORT: "5432"
+      DB_NAME: "meet_people"
+      DB_SSL_MODE: "disable"
+      SMTP_HOST: "smtp.mailtrap.io"
+      SMTP_PORT: "2525"
+      SMTP_USERNAME: "160986abf98ac5"
+      SMTP_PASSWORD: "652112cf4f42d9"
+      RABBITMQ_HOST: "queue"
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "misere"
+      RABBITMQ_PASSWORD: "123456"
+      RABBITMQ_VHOST: "/"
+      RABBITMQ_QUEUE_NAME: "email"
+      RABBITMQ_EXCHANGE_NAME: "meet-people"
+      RABBITMQ_EXCHANGE_KEY: "email"
+      RABBITMQ_EXCHANGE_KIND: "direct"
+    depends_on:
+      - queue
+      - db
+    restart: always
+    networks:
+      - back
+networks:
+  back:
+    driver: bridge
