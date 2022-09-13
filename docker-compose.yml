@@ -14,9 +14,9 @@ services:
   db:
     image: "postgres"
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=meet_people
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: meet_people
     ports:
       - "5432:5432"
     volumes:
