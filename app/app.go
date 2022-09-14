@@ -19,7 +19,7 @@ func StartApplication() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db, err := infra.StartConnection()
+	db, err := infra.StartDBConnection()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -15,8 +15,8 @@ func (u *UserRepositoryMock) CreateUser(user *domain.User) (*domain.User, error)
 	return user, nil
 }
 
-func (u *UserRepositoryMock) FindUserByEmail(email string) *domain.User {
-	return nil
+func (u *UserRepositoryMock) FindUserByEmail(email string) (*domain.User, error) {
+	return nil, nil
 }
 
 func (u *UserRepositoryMock) FindUserByPathAccountActivation(path string) *domain.User {
@@ -38,7 +38,7 @@ func (u *UserRepoEmailAlreadyExistsMock) CreateUser(user *domain.User) (*domain.
 	return user, nil
 }
 
-func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) *domain.User {
+func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) (*domain.User, error) {
 	return &domain.User{
 		ID:              1,
 		FirstName:       "Mateus",
@@ -49,7 +49,7 @@ func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) *domain.U
 		ConfirmPassword: "123456",
 		Birthday:        839066400,
 		Gender:          "M",
-	}
+	}, nil
 }
 
 func (u *UserRepoEmailAlreadyExistsMock) FindUserByPathAccountActivation(path string) *domain.User {

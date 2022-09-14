@@ -17,7 +17,7 @@ type UserUseCase interface {
 
 type UserRepository interface {
 	CreateUser(user *User) (*User, error)
-	FindUserByEmail(email string) *User
+	FindUserByEmail(email string) (*User, error)
 	FindUserByPathAccountActivation(path string) *User
 	ActivateAccount(user *User) *User
 }
