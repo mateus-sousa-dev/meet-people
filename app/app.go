@@ -53,6 +53,7 @@ func StartApplication() {
 	apiV1Routes := r.Group("/api/v1")
 	apiV1Routes.POST("/users", userDelivery.CreateUser)
 	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
+	apiV1Routes.PATCH("/forgot-password", userDelivery.ForgotPassword)
 	apiV1Routes.POST("/login", loginDelivery.Exec)
 	apiV1Routes.GET("/logged", middlewares.Authenticate(userDelivery.Logged))
 	r.Run()

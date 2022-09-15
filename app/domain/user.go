@@ -13,6 +13,7 @@ import (
 type UserUseCase interface {
 	CreateUser(dto UserDto) (*User, error)
 	ActivateAccount(path string) error
+	ForgotPassword(email string) error
 }
 
 type UserRepository interface {

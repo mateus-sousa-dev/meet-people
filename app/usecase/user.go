@@ -70,3 +70,11 @@ func (u *UserUseCase) validatePasswordStrength(password string) error {
 	}
 	return nil
 }
+
+func (u *UserUseCase) ForgotPassword(email string) error {
+	user := u.repo.FindUserByEmail(email)
+	if user == nil {
+		return errors.New("your search did not return any results")
+	}
+	return nil
+}
