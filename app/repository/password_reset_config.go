@@ -46,3 +46,11 @@ func (p *PasswordResetConfigRepository) FindPasswordResetConfigByUrl(url string)
 	}
 	return &passwordResetConfig
 }
+
+func (p *PasswordResetConfigRepository) ExpireByUse(passwordResetConfigID int64) error {
+	tx := p.db.Model(&domain.PasswordResetConfig{}).Where("id = ?", passwordResetConfigID).Update("expiration_by_use", 1)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}

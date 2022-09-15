@@ -13,6 +13,7 @@ type PasswordResetConfigRepository interface {
 	CreatePasswordResetConfig(passwordResetConfig *PasswordResetConfig) (*PasswordResetConfig, error)
 	UpdatePasswordResetConfig(passwordResetConfig *PasswordResetConfig) (*PasswordResetConfig, error)
 	FindPasswordResetConfigByUrl(url string) *PasswordResetConfig
+	ExpireByUse(passwordResetConfigID int64) error
 }
 
 type PasswordResetConfig struct {

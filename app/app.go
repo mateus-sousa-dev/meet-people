@@ -56,6 +56,7 @@ func StartApplication() {
 	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
 	apiV1Routes.PATCH("/forgot-password", userDelivery.ForgotPassword)
 	apiV1Routes.GET("/validate-url-password/:urlpasswordreset", userDelivery.ValidateUrlPassword)
+	apiV1Routes.PATCH("/reset-forgotten-password/:urlpasswordreset", userDelivery.ResetForgottenPassword)
 	apiV1Routes.POST("/login", loginDelivery.Exec)
 	apiV1Routes.GET("/logged", middlewares.Authenticate(userDelivery.Logged))
 	r.Run()

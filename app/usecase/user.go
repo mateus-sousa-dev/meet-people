@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/internal"
+	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
@@ -103,6 +104,36 @@ func (u *UserUseCase) ValidateUrlPassword(url string) error {
 	passwordResetConfig := u.passwordResetConfigRepo.FindPasswordResetConfigByUrl(url)
 	if passwordResetConfig == nil || !passwordResetConfig.IsValidUrl() {
 		return errors.New("invalid url")
+	}
+	return nil
+}
+
+func (u *UserUseCase) ResetForgottenPassword(passwordDto domain.PasswordDto, url string) error {
+	if passwordDto.NewPassword != passwordDto.ConfirmPassword {
+		return errors.New("passwords fields must be equal")
+	}
+	if len(passwordDto.NewPassword) < 8 {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToLower(passwordDto.NewPassword) == passwordDto.NewPassword {
+		return errors.New("password is not strong enough")
+	}
+	if strings.ToUpper(passwordDto.NewPassword) == passwordDto.NewPassword {
+		return errors.New("password is not strong enough")
+	}
+	passwordResetConfig := u.passwordResetConfigRepo.FindPasswordResetConfigByUrl(url)
+	if passwordResetConfig == nil || !passwordResetConfig.IsValidUrl() {
+		return errors.New("invalid url")
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(passwordDto.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	password := string(hash)
+	err = u.repo.ChangePassword(password, passwordResetConfig.UsersID)
+	err = u.passwordResetConfigRepo.ExpireByUse(passwordResetConfig.ID)
+	if err != nil {
+		return err
 	}
 	return nil
 }
