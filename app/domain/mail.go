@@ -5,8 +5,23 @@ type MailRepository interface {
 }
 
 type EmailUseCase interface {
-	SendEmail(msgBody []byte) error
-	SendEmail2(msg []byte) error
+	SendAccountActivationEmail(EventEmailDto) error
+	SendPasswordResetEmail(EventEmailDto) error
+}
+
+type EventEmailDto struct {
+	Type string
+	Body map[string]interface{}
+}
+
+type ActivateAccountBody struct {
+	Email                string `json:"email"`
+	UrlAccountActivation string `json:"urlAccountActivation"`
+}
+
+type ResetPasswordBody struct {
+	Email            string `json:"email"`
+	UrlPasswordReset string `json:"urlPasswordReset"`
 }
 
 type MailSender struct {

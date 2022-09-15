@@ -41,12 +41,6 @@ func StartApplication() {
 			log.Fatal(err)
 		}
 	}()
-	go func() {
-		err = emailDelivery.StartConsume2()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
 	userRepository := repository.NewUserRepository(db)
 	eventRepository := repository.NewEventRepository(rabbitmqChannel)
 	userUseCase := usecase.NewUserUseCase(userRepository, eventRepository)

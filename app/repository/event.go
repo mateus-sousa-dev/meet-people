@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/streadway/amqp"
-	"os"
 )
 
 type EventRepository struct {
@@ -13,32 +13,15 @@ func NewEventRepository(channel *amqp.Channel) *EventRepository {
 	return &EventRepository{channel: channel}
 }
 
-func (e *EventRepository) PublishEvent(body string) error {
+func (e *EventRepository) PublishEvent(event *domain.Event) error {
 	err := e.channel.Publish(
-		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
-		os.Getenv("RABBITMQ_EXCHANGE_KEY"),
+		event.ExchangeName,
+		event.ExchangeKey,
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		},
-	)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (e *EventRepository) PublishEvent2(body string) error {
-	err := e.channel.Publish(
-		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
-		"email2",
-		false,
-		false,
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			ContentType: event.ContentType,
+			Body:        []byte(event.Body),
 		},
 	)
 	if err != nil {

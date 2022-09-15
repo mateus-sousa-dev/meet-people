@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/mateus-sousa-dev/meet-people/app/internal"
 	"strings"
@@ -37,8 +36,8 @@ func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	bodyEvent := fmt.Sprintf("{ \"email\":\"%s\", \"urlAccountActivation\":\"%s\"}", user.Email, user.PathAccountActivation)
-	err = u.eventRepository.PublishEvent(bodyEvent)
+	event := domain.NewActivateAccountEvent(user.Email, user.PathAccountActivation)
+	err = u.eventRepository.PublishEvent(event)
 	if err != nil {
 		return nil, err
 	}
@@ -76,8 +75,8 @@ func (u *UserUseCase) ForgotPassword(email string) error {
 	if user == nil {
 		return errors.New("your search did not return any results")
 	}
-	bodyEvent := fmt.Sprintf("{ \"email\":\"%s\", \"urlAccountActivation\":\"%s\"}", user.Email, user.FirstName)
-	err := u.eventRepository.PublishEvent2(bodyEvent)
+	event := domain.NewResetPasswordEvent(user.Email, "123")
+	err := u.eventRepository.PublishEvent(event)
 	if err != nil {
 		return err
 	}

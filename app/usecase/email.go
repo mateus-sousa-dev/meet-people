@@ -14,14 +14,13 @@ func NewEmailUseCase(mailRepository domain.MailRepository) *EmailUseCase {
 	return &EmailUseCase{mailRepository: mailRepository}
 }
 
-type Body struct {
-	Email                string `json:"email"`
-	UrlAccountActivation string `json:"urlAccountActivation"`
-}
-
-func (e *EmailUseCase) SendEmail(msg []byte) error {
-	var body Body
-	err := json.Unmarshal(msg, &body)
+func (e *EmailUseCase) SendAccountActivationEmail(eventEmailDto domain.EventEmailDto) error {
+	eventBodyJson, err := json.Marshal(eventEmailDto.Body)
+	if err != nil {
+		return err
+	}
+	var body *domain.ActivateAccountBody
+	err = json.Unmarshal(eventBodyJson, &body)
 	if err != nil {
 		return err
 	}
@@ -40,19 +39,23 @@ func (e *EmailUseCase) SendEmail(msg []byte) error {
 	return nil
 }
 
-func (e *EmailUseCase) SendEmail2(msg []byte) error {
-	var body Body
-	err := json.Unmarshal(msg, &body)
+func (e *EmailUseCase) SendPasswordResetEmail(eventEmailDto domain.EventEmailDto) error {
+	eventBodyJson, err := json.Marshal(eventEmailDto.Body)
 	if err != nil {
 		return err
 	}
-	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + body.UrlAccountActivation
+	var body *domain.ResetPasswordBody
+	err = json.Unmarshal(eventBodyJson, &body)
+	if err != nil {
+		return err
+	}
+	urlPasswordReset := os.Getenv("APP_URL") + "/reset-password" + "/" + body.UrlPasswordReset
 	mailSender := &domain.MailSender{
 		From:        "no-reply@meetpeople.com",
 		To:          body.Email,
-		Subject:     "Link de ativação",
+		Subject:     "Link para nova senha",
 		ContentType: "text/html",
-		Body:        "Clique no link para resetar sua senha: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
+		Body:        "Clique no link para resetar sua senha: <a href=\"" + urlPasswordReset + "\">" + urlPasswordReset + "</a>",
 	}
 	err = e.mailRepository.SendMail(mailSender)
 	if err != nil {
