@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/mateus-sousa-dev/meet-people/app/auth"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,5 +28,6 @@ func (l *LoginUseCase) Exec(loginDto domain.LoginDto) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "TOKEN", nil
+	token, _ := auth.CreateToken(user.ID)
+	return token, nil
 }

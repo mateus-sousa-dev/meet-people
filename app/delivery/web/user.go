@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mateus-sousa-dev/meet-people/app/auth"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"net/http"
 )
@@ -55,4 +56,13 @@ func (u *UserDelivery) ActivateAccount(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, "account was activated successfully")
+}
+
+func (u *UserDelivery) Logged(c *gin.Context) {
+	userID, err := auth.ExtractUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+	c.JSON(200, userID)
 }
