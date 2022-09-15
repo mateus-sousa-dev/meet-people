@@ -1,6 +1,9 @@
 package rabbitmq
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"github.com/streadway/amqp"
 	"os"
@@ -36,7 +39,12 @@ func (d *EmailDelivery) StartConsume() error {
 		if !ok {
 			return nil
 		}
-		err := d.emailUsecase.SendEmail(msg.Body)
+		var eventEmailDto domain.EventEmailDto
+		err := json.Unmarshal(msg.Body, &eventEmailDto)
+		if err != nil {
+			err = msg.Nack(true, true)
+		}
+		err = d.handleUseCase(eventEmailDto)
 		if err != nil {
 			err = msg.Nack(true, true)
 		}
@@ -45,4 +53,14 @@ func (d *EmailDelivery) StartConsume() error {
 			return err
 		}
 	}
+}
+
+func (d *EmailDelivery) handleUseCase(eventEmailDto domain.EventEmailDto) error {
+	if eventEmailDto.Type == "activate-account" {
+		return d.emailUsecase.SendAccountActivationEmail(eventEmailDto)
+	} else if eventEmailDto.Type == "reset-password" {
+		return d.emailUsecase.SendPasswordResetEmail(eventEmailDto)
+	}
+	fmt.Println("invalido")
+	return errors.New("invalid event structure")
 }

@@ -12,6 +12,7 @@ type MailRepository struct {
 func NewMailRepository(smtpDialer *gomail.Dialer) *MailRepository {
 	return &MailRepository{smtpDialer: smtpDialer}
 }
+
 func (m *MailRepository) SendMail(mailSender *domain.MailSender) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", mailSender.From)

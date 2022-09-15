@@ -66,3 +66,39 @@ func (u *UserDelivery) Logged(c *gin.Context) {
 	}
 	c.JSON(200, userID)
 }
+
+func (u *UserDelivery) ForgotPassword(c *gin.Context) {
+	email := c.Query("email")
+	err := u.useCase.ForgotPassword(email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "url to reset password was send to your e-mail")
+}
+
+func (u *UserDelivery) ValidateUrlPassword(c *gin.Context) {
+	url := c.Param("urlpasswordreset")
+	err := u.useCase.ValidateUrlPassword(url)
+	if err != nil {
+		c.JSON(http.StatusForbidden, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "url is valid")
+}
+
+func (u *UserDelivery) ResetForgottenPassword(c *gin.Context) {
+	url := c.Param("urlpasswordreset")
+	var passwordDto domain.PasswordDto
+	err := c.ShouldBindJSON(&passwordDto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = u.useCase.ResetForgottenPassword(passwordDto, url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "password updated successfully")
+}

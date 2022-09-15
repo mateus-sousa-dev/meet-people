@@ -13,6 +13,9 @@ import (
 type UserUseCase interface {
 	CreateUser(dto UserDto) (*User, error)
 	ActivateAccount(path string) error
+	ForgotPassword(email string) error
+	ValidateUrlPassword(url string) error
+	ResetForgottenPassword(passwordDto PasswordDto, url string) error
 }
 
 type UserRepository interface {
@@ -20,6 +23,7 @@ type UserRepository interface {
 	FindUserByEmail(email string) *User
 	FindUserByPathAccountActivation(path string) *User
 	ActivateAccount(user *User) *User
+	ChangePassword(password string, userID int64) error
 }
 
 type User struct {
@@ -48,6 +52,11 @@ type UserDto struct {
 	ConfirmPassword string `json:"confirm_password"`
 	Birthday        int    `json:"birthday"`
 	Gender          string `json:"gender"`
+}
+
+type PasswordDto struct {
+	NewPassword     string `json:"new_password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 func init() {

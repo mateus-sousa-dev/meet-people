@@ -3,7 +3,6 @@ package usecase
 import (
 	"encoding/json"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
-	"os"
 )
 
 type EmailUseCase struct {
@@ -14,25 +13,35 @@ func NewEmailUseCase(mailRepository domain.MailRepository) *EmailUseCase {
 	return &EmailUseCase{mailRepository: mailRepository}
 }
 
-type Body struct {
-	Email                string `json:"email"`
-	UrlAccountActivation string `json:"urlAccountActivation"`
-}
-
-func (e *EmailUseCase) SendEmail(msg []byte) error {
-	var body Body
-	err := json.Unmarshal(msg, &body)
+func (e *EmailUseCase) SendAccountActivationEmail(eventEmailDto domain.EventEmailDto) error {
+	eventBodyJson, err := json.Marshal(eventEmailDto.Body)
 	if err != nil {
 		return err
 	}
-	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + body.UrlAccountActivation
-	mailSender := &domain.MailSender{
-		From:        "no-reply@meetpeople.com",
-		To:          body.Email,
-		Subject:     "Link de ativação",
-		ContentType: "text/html",
-		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
+	var body *domain.ActivateAccountBody
+	err = json.Unmarshal(eventBodyJson, &body)
+	if err != nil {
+		return err
 	}
+	mailSender := domain.NewAccountActivationMailSender(body)
+	err = e.mailRepository.SendMail(mailSender)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *EmailUseCase) SendPasswordResetEmail(eventEmailDto domain.EventEmailDto) error {
+	eventBodyJson, err := json.Marshal(eventEmailDto.Body)
+	if err != nil {
+		return err
+	}
+	var body *domain.ResetPasswordBody
+	err = json.Unmarshal(eventBodyJson, &body)
+	if err != nil {
+		return err
+	}
+	mailSender := domain.NewPasswordResetMailSender(body)
 	err = e.mailRepository.SendMail(mailSender)
 	if err != nil {
 		return err

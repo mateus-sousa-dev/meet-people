@@ -13,3 +13,12 @@ create table users(
        updated_at int,
        deleted_at int
 );
+
+create table password_reset_configs(
+   id serial primary key,
+   users_id int,
+   url varchar,
+   expiration_by_use int,
+   updated_at int,
+   foreign key(users_id) references users(id)
+);

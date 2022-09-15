@@ -27,6 +27,10 @@ func (u *UserRepositoryMock) ActivateAccount(user *domain.User) *domain.User {
 	return nil
 }
 
+func (u *UserRepositoryMock) ChangePassword(password string, userID int64) error {
+	return nil
+}
+
 type UserRepoEmailAlreadyExistsMock struct{}
 
 func NewUserRepoEmailAlreadyExistsMock() *UserRepoEmailAlreadyExistsMock {
@@ -57,5 +61,9 @@ func (u *UserRepoEmailAlreadyExistsMock) FindUserByPathAccountActivation(path st
 }
 
 func (u *UserRepoEmailAlreadyExistsMock) ActivateAccount(user *domain.User) *domain.User {
+	return nil
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) ChangePassword(password string, userID int64) error {
 	return nil
 }

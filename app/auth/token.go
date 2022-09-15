@@ -23,10 +23,8 @@ func ValidateToken(c *gin.Context) error {
 	tokenString := extractToken(c)
 	token, err := jwt.Parse(tokenString, getVerifyKey)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
-
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return nil
 	}
@@ -37,10 +35,8 @@ func ExtractUserID(c *gin.Context) (int64, error) {
 	tokenString := extractToken(c)
 	token, err := jwt.Parse(tokenString, getVerifyKey)
 	if err != nil {
-		fmt.Println(err)
 		return 0, err
 	}
-
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userID, err := strconv.ParseInt(fmt.Sprintf("%.0f", claims["userId"]), 10, 64)
 		if err != nil {
@@ -48,7 +44,6 @@ func ExtractUserID(c *gin.Context) (int64, error) {
 		}
 		return userID, nil
 	}
-
 	return 0, fmt.Errorf("invalid token")
 }
 func extractToken(c *gin.Context) string {

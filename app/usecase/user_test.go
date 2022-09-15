@@ -26,7 +26,8 @@ func TestCreateUser(t *testing.T) {
 	}
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Nil(t, err)
 	assert.Equal(t, "Mateus", user.FirstName)
@@ -57,7 +58,8 @@ func TestCreateUserInvalid(t *testing.T) {
 	}
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "ConfirmPassword: Should be equal to the Password field", err.Error())
 	assert.Nil(t, user)
@@ -76,7 +78,8 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 	}
 	repo := mocks.NewUserRepoEmailAlreadyExistsMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "email already exists", err.Error())
 	assert.Nil(t, user)
@@ -86,7 +89,8 @@ func TestValidatePasswordStrengthShort(t *testing.T) {
 	password := "Ab14725"
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -95,7 +99,8 @@ func TestValidatePasswordStrengthNotUpper(t *testing.T) {
 	password := "abcd147258369"
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -104,7 +109,8 @@ func TestValidatePasswordStrengthNotLower(t *testing.T) {
 	password := "ABCD147258369"
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
@@ -113,7 +119,8 @@ func TestValidatePasswordStrengthValid(t *testing.T) {
 	password := "AbCd147258369"
 	repo := mocks.NewUserRepositoryMock()
 	eventRepo := mocks.NewEventRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo)
+	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
+	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Nil(t, err)
 }

@@ -43,3 +43,11 @@ func (u *UserRepository) ActivateAccount(user *domain.User) *domain.User {
 	u.db.Model(&user).UpdateColumns(user)
 	return user
 }
+
+func (u *UserRepository) ChangePassword(password string, userID int64) error {
+	tx := u.db.Model(&domain.User{}).Where("id = ?", userID).Update("password", password)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}
