@@ -76,5 +76,10 @@ func (u *UserUseCase) ForgotPassword(email string) error {
 	if user == nil {
 		return errors.New("your search did not return any results")
 	}
+	bodyEvent := fmt.Sprintf("{ \"email\":\"%s\", \"urlAccountActivation\":\"%s\"}", user.Email, user.FirstName)
+	err := u.eventRepository.PublishEvent2(bodyEvent)
+	if err != nil {
+		return err
+	}
 	return nil
 }

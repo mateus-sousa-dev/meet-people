@@ -39,3 +39,24 @@ func (e *EmailUseCase) SendEmail(msg []byte) error {
 	}
 	return nil
 }
+
+func (e *EmailUseCase) SendEmail2(msg []byte) error {
+	var body Body
+	err := json.Unmarshal(msg, &body)
+	if err != nil {
+		return err
+	}
+	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + body.UrlAccountActivation
+	mailSender := &domain.MailSender{
+		From:        "no-reply@meetpeople.com",
+		To:          body.Email,
+		Subject:     "Link de ativação",
+		ContentType: "text/html",
+		Body:        "Clique no link para resetar sua senha: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
+	}
+	err = e.mailRepository.SendMail(mailSender)
+	if err != nil {
+		return err
+	}
+	return nil
+}

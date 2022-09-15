@@ -29,3 +29,20 @@ func (e *EventRepository) PublishEvent(body string) error {
 	}
 	return nil
 }
+
+func (e *EventRepository) PublishEvent2(body string) error {
+	err := e.channel.Publish(
+		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
+		"email2",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}

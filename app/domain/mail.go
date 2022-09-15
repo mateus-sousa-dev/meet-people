@@ -6,6 +6,7 @@ type MailRepository interface {
 
 type EmailUseCase interface {
 	SendEmail(msgBody []byte) error
+	SendEmail2(msg []byte) error
 }
 
 type MailSender struct {

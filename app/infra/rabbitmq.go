@@ -35,6 +35,17 @@ func StartRabbitMQ() (*amqp.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
+	q2, err := ch.QueueDeclare(
+		"email2",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
 	err = ch.ExchangeDeclare(os.Getenv("RABBITMQ_EXCHANGE_NAME"),
 		os.Getenv("RABBITMQ_EXCHANGE_KIND"),
 		true,
@@ -48,6 +59,15 @@ func StartRabbitMQ() (*amqp.Channel, error) {
 	}
 	err = ch.QueueBind(q.Name,
 		os.Getenv("RABBITMQ_EXCHANGE_KEY"),
+		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
+		false,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+	err = ch.QueueBind(q2.Name,
+		"email2",
 		os.Getenv("RABBITMQ_EXCHANGE_NAME"),
 		false,
 		nil,

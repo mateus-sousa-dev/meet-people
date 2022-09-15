@@ -46,3 +46,32 @@ func (d *EmailDelivery) StartConsume() error {
 		}
 	}
 }
+
+func (d *EmailDelivery) StartConsume2() error {
+	msgs, err := d.rabbitmqChannel.Consume(
+		"email2",
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	for {
+		msg, ok := <-msgs
+		if !ok {
+			return nil
+		}
+		err := d.emailUsecase.SendEmail(msg.Body)
+		if err != nil {
+			err = msg.Nack(true, true)
+		}
+		err = msg.Ack(true)
+		if err != nil {
+			return err
+		}
+	}
+}
