@@ -59,6 +59,7 @@ services:
       RABBITMQ_EXCHANGE_NAME: "meet-people"
       RABBITMQ_EXCHANGE_KEY: "email"
       RABBITMQ_EXCHANGE_KIND: "direct"
+      TOKEN_SECRET: "token_example"
     depends_on:
       - queue
       - db

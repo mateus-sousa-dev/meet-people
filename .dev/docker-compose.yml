@@ -19,8 +19,6 @@ services:
       - "5432:5432"
     volumes:
       - ./migration/docker-database-initial.sql:/docker-entrypoint-initdb.d/docker-database-initial.sql
-    networks:
-      - back
   pgadmin-compose:
     image: dpage/pgadmin4
     environment:

@@ -16,6 +16,38 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/activate-account/{activationpath}": {
+            "get": {
+                "description": "Route to Activate Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Activate Account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Path de ativação",
+                        "name": "activationpath",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users": {
             "post": {
                 "description": "Route to create a new user",
@@ -61,13 +93,10 @@ const docTemplate = `{
                 "birthday": {
                     "type": "integer"
                 },
-                "confirmPassword": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
-                "firstName": {
+                "first_name": {
                     "type": "string"
                 },
                 "gender": {
@@ -76,16 +105,10 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "lastName": {
+                "last_name": {
                     "type": "string"
                 },
-                "mobileNumber": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "pathAccountActivation": {
+                "mobile_number": {
                     "type": "string"
                 }
             }

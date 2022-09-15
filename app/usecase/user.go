@@ -19,6 +19,7 @@ func NewUserUseCase(repo domain.UserRepository, eventRepository domain.EventRepo
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
 	user := u.repo.FindUserByEmail(userDto.Email)
+
 	if user != nil {
 		return nil, errors.New("email already exists")
 	}

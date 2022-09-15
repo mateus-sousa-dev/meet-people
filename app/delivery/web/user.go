@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mateus-sousa-dev/meet-people/app/auth"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"net/http"
 )
@@ -38,6 +39,15 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
+// ActivateAccount godoc
+// @Summary Activate Account
+// @Description Route to Activate Account
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param activationpath query string true "Path de ativação"
+// @Success 201 {string} account was activated successfully
+// @Router /api/v1/activate-account/{activationpath} [get]
 func (u *UserDelivery) ActivateAccount(c *gin.Context) {
 	activationPath := c.Param("activationpath")
 	err := u.useCase.ActivateAccount(activationPath)
@@ -46,4 +56,13 @@ func (u *UserDelivery) ActivateAccount(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, "account was activated successfully")
+}
+
+func (u *UserDelivery) Logged(c *gin.Context) {
+	userID, err := auth.ExtractUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+	c.JSON(200, userID)
 }

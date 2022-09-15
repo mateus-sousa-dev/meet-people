@@ -1,6 +1,8 @@
 package main
 
-import "github.com/mateus-sousa-dev/meet-people/app"
+import (
+	"github.com/mateus-sousa-dev/meet-people/app"
+)
 
 // @title Meet People
 // @version 0.1.0

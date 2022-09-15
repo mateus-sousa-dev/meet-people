@@ -5,23 +5,17 @@ definitions:
         type: integer
       birthday:
         type: integer
-      confirmPassword:
-        type: string
       email:
         type: string
-      firstName:
+      first_name:
         type: string
       gender:
         type: string
       id:
         type: integer
-      lastName:
+      last_name:
         type: string
-      mobileNumber:
-        type: string
-      password:
-        type: string
-      pathAccountActivation:
+      mobile_number:
         type: string
     type: object
   domain.UserDto:
@@ -50,6 +44,27 @@ info:
   title: Meet People
   version: 0.1.0
 paths:
+  /api/v1/activate-account/{activationpath}:
+    get:
+      consumes:
+      - application/json
+      description: Route to Activate Account
+      parameters:
+      - description: Path de ativação
+        in: query
+        name: activationpath
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+      summary: Activate Account
+      tags:
+      - Users
   /api/v1/users:
     post:
       consumes:

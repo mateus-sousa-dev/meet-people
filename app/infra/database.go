@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func StartConnection() (*gorm.DB, error) {
+func StartDBConnection() (*gorm.DB, error) {
 	host := os.Getenv("DB_HOST")
 	user := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
