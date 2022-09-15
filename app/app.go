@@ -45,7 +45,6 @@ func StartApplication() {
 	eventRepository := repository.NewEventRepository(rabbitmqChannel)
 	userUseCase := usecase.NewUserUseCase(userRepository, eventRepository)
 	userDelivery := web.NewUserDelivery(userUseCase)
-
 	loginUseCase := usecase.NewLoginUseCase(userRepository)
 	loginDelivery := web.NewLoginDelivery(loginUseCase)
 	r := gin.Default()
