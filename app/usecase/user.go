@@ -8,12 +8,13 @@ import (
 )
 
 type UserUseCase struct {
-	repo            domain.UserRepository
-	eventRepository domain.EventRepository
+	repo                    domain.UserRepository
+	eventRepository         domain.EventRepository
+	passwordResetConfigRepo domain.PasswordResetConfigRepository
 }
 
-func NewUserUseCase(repo domain.UserRepository, eventRepository domain.EventRepository) *UserUseCase {
-	return &UserUseCase{repo: repo, eventRepository: eventRepository}
+func NewUserUseCase(repo domain.UserRepository, eventRepository domain.EventRepository, passwordResetConfigRepo domain.PasswordResetConfigRepository) *UserUseCase {
+	return &UserUseCase{repo: repo, eventRepository: eventRepository, passwordResetConfigRepo: passwordResetConfigRepo}
 }
 
 func (u *UserUseCase) CreateUser(userDto domain.UserDto) (*domain.User, error) {
@@ -75,10 +76,24 @@ func (u *UserUseCase) ForgotPassword(email string) error {
 	if user == nil {
 		return errors.New("your search did not return any results")
 	}
-	event := domain.NewResetPasswordEvent(user.Email, "123")
-	err := u.eventRepository.PublishEvent(event)
+	passwordResetConfig, err := u.upsertPasswordResetConfig(user.ID)
+	if err != nil {
+		return err
+	}
+	event := domain.NewResetPasswordEvent(user.Email, passwordResetConfig.Url)
+	err = u.eventRepository.PublishEvent(event)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (u *UserUseCase) upsertPasswordResetConfig(userID int64) (*domain.PasswordResetConfig, error) {
+	passwordResetConfig := domain.NewPasswordResetConfig(userID)
+	storedPasswordResetConfig := u.passwordResetConfigRepo.FindPasswordResetConfigByUser(userID)
+	if storedPasswordResetConfig == nil {
+		return u.passwordResetConfigRepo.CreatePasswordResetConfig(passwordResetConfig)
+	}
+	passwordResetConfig.ID = storedPasswordResetConfig.UsersID
+	return u.passwordResetConfigRepo.UpdatePasswordResetConfig(passwordResetConfig)
 }
