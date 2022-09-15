@@ -44,11 +44,15 @@ func StartApplication() {
 	eventRepository := repository.NewEventRepository(rabbitmqChannel)
 	userUseCase := usecase.NewUserUseCase(userRepository, eventRepository)
 	userDelivery := web.NewUserDelivery(userUseCase)
+
+	loginUseCase := usecase.NewLoginUseCase(userRepository)
+	loginDelivery := web.NewLoginDelivery(loginUseCase)
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	apiV1Routes := r.Group("/api/v1")
 	apiV1Routes.POST("/users", userDelivery.CreateUser)
 	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
+	apiV1Routes.POST("/login", loginDelivery.Exec)
 	r.Run()
 }

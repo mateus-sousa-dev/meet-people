@@ -21,16 +21,13 @@ func (u *UserRepository) CreateUser(user *domain.User) (*domain.User, error) {
 	return user, nil
 }
 
-func (u *UserRepository) FindUserByEmail(email string) (*domain.User, error) {
+func (u *UserRepository) FindUserByEmail(email string) *domain.User {
 	var user domain.User
-	tx := u.db.Where(&domain.User{Email: email}).First(&user)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
+	u.db.Where(&domain.User{Email: email}).First(&user)
 	if user.ID == 0 {
-		return nil, nil
+		return nil
 	}
-	return &user, nil
+	return &user
 }
 
 func (u *UserRepository) FindUserByPathAccountActivation(path string) *domain.User {

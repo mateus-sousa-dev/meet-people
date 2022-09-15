@@ -38,6 +38,15 @@ func (u *UserDelivery) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
+// ActivateAccount godoc
+// @Summary Activate Account
+// @Description Route to Activate Account
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param activationpath query string true "Path de ativação"
+// @Success 201 {string} account was activated successfully
+// @Router /api/v1/activate-account/{activationpath} [get]
 func (u *UserDelivery) ActivateAccount(c *gin.Context) {
 	activationPath := c.Param("activationpath")
 	err := u.useCase.ActivateAccount(activationPath)
