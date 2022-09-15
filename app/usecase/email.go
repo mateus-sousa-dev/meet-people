@@ -3,7 +3,6 @@ package usecase
 import (
 	"encoding/json"
 	"github.com/mateus-sousa-dev/meet-people/app/domain"
-	"os"
 )
 
 type EmailUseCase struct {
@@ -24,14 +23,7 @@ func (e *EmailUseCase) SendAccountActivationEmail(eventEmailDto domain.EventEmai
 	if err != nil {
 		return err
 	}
-	urlAccountActivation := os.Getenv("APP_URL") + "/activate-account" + "/" + body.UrlAccountActivation
-	mailSender := &domain.MailSender{
-		From:        "no-reply@meetpeople.com",
-		To:          body.Email,
-		Subject:     "Link de ativação",
-		ContentType: "text/html",
-		Body:        "Clique no link para ativar a sua conta: <a href=\"" + urlAccountActivation + "\">" + urlAccountActivation + "</a>",
-	}
+	mailSender := domain.NewAccountActivationMailSender(body)
 	err = e.mailRepository.SendMail(mailSender)
 	if err != nil {
 		return err
@@ -49,14 +41,7 @@ func (e *EmailUseCase) SendPasswordResetEmail(eventEmailDto domain.EventEmailDto
 	if err != nil {
 		return err
 	}
-	urlPasswordReset := os.Getenv("APP_URL") + "/reset-password" + "/" + body.UrlPasswordReset
-	mailSender := &domain.MailSender{
-		From:        "no-reply@meetpeople.com",
-		To:          body.Email,
-		Subject:     "Link para nova senha",
-		ContentType: "text/html",
-		Body:        "Clique no link para resetar sua senha: <a href=\"" + urlPasswordReset + "\">" + urlPasswordReset + "</a>",
-	}
+	mailSender := domain.NewPasswordResetMailSender(body)
 	err = e.mailRepository.SendMail(mailSender)
 	if err != nil {
 		return err
