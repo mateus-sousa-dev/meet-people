@@ -21,3 +21,11 @@ func (p *PasswordResetConfigRepositoryMock) CreatePasswordResetConfig(passwordRe
 func (p *PasswordResetConfigRepositoryMock) UpdatePasswordResetConfig(passwordResetConfig *domain.PasswordResetConfig) (*domain.PasswordResetConfig, error) {
 	return nil, nil
 }
+
+func (p *PasswordResetConfigRepositoryMock) FindPasswordResetConfigByUrl(url string) *domain.PasswordResetConfig {
+	return nil
+}
+
+func (p *PasswordResetConfigRepositoryMock) ExpireByUse(passwordResetConfigID int64) error {
+	return nil
+}
