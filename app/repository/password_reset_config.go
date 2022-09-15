@@ -37,3 +37,12 @@ func (p *PasswordResetConfigRepository) UpdatePasswordResetConfig(passwordResetC
 	}
 	return passwordResetConfig, nil
 }
+
+func (p *PasswordResetConfigRepository) FindPasswordResetConfigByUrl(url string) *domain.PasswordResetConfig {
+	var passwordResetConfig domain.PasswordResetConfig
+	p.db.Where(&domain.PasswordResetConfig{Url: url}).First(&passwordResetConfig)
+	if passwordResetConfig.ID == 0 {
+		return nil
+	}
+	return &passwordResetConfig
+}

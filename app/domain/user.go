@@ -14,6 +14,7 @@ type UserUseCase interface {
 	CreateUser(dto UserDto) (*User, error)
 	ActivateAccount(path string) error
 	ForgotPassword(email string) error
+	ValidateUrlPassword(url string) error
 }
 
 type UserRepository interface {

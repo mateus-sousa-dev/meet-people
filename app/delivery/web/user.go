@@ -76,3 +76,13 @@ func (u *UserDelivery) ForgotPassword(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, "url to reset password was send to your e-mail")
 }
+
+func (u *UserDelivery) ValidateUrlPassword(c *gin.Context) {
+	url := c.Param("urlpasswordreset")
+	err := u.useCase.ValidateUrlPassword(url)
+	if err != nil {
+		c.JSON(http.StatusForbidden, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "url is valid")
+}

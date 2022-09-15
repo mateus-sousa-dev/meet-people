@@ -12,6 +12,7 @@ type PasswordResetConfigRepository interface {
 	FindPasswordResetConfigByUser(userID int64) *PasswordResetConfig
 	CreatePasswordResetConfig(passwordResetConfig *PasswordResetConfig) (*PasswordResetConfig, error)
 	UpdatePasswordResetConfig(passwordResetConfig *PasswordResetConfig) (*PasswordResetConfig, error)
+	FindPasswordResetConfigByUrl(url string) *PasswordResetConfig
 }
 
 type PasswordResetConfig struct {
@@ -28,4 +29,11 @@ func NewPasswordResetConfig(userID int64) *PasswordResetConfig {
 	passwordResetConfig.ExpirationByUse = 0
 	passwordResetConfig.UpdatedAt = internal.Now().UTC().Unix()
 	return passwordResetConfig
+}
+
+func (p *PasswordResetConfig) IsValidUrl() bool {
+	if p.ExpirationByUse != 0 || (time.Now().UTC().Unix()-p.UpdatedAt) > 300 {
+		return false
+	}
+	return true
 }

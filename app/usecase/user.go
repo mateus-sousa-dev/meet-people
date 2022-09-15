@@ -90,10 +90,19 @@ func (u *UserUseCase) ForgotPassword(email string) error {
 
 func (u *UserUseCase) upsertPasswordResetConfig(userID int64) (*domain.PasswordResetConfig, error) {
 	passwordResetConfig := domain.NewPasswordResetConfig(userID)
+
 	storedPasswordResetConfig := u.passwordResetConfigRepo.FindPasswordResetConfigByUser(userID)
 	if storedPasswordResetConfig == nil {
 		return u.passwordResetConfigRepo.CreatePasswordResetConfig(passwordResetConfig)
 	}
-	passwordResetConfig.ID = storedPasswordResetConfig.UsersID
+	passwordResetConfig.ID = storedPasswordResetConfig.ID
 	return u.passwordResetConfigRepo.UpdatePasswordResetConfig(passwordResetConfig)
+}
+
+func (u *UserUseCase) ValidateUrlPassword(url string) error {
+	passwordResetConfig := u.passwordResetConfigRepo.FindPasswordResetConfigByUrl(url)
+	if passwordResetConfig == nil || !passwordResetConfig.IsValidUrl() {
+		return errors.New("invalid url")
+	}
+	return nil
 }
