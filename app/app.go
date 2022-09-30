@@ -3,13 +3,14 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/mateus-sousa-dev/meet-people/app/delivery/rabbitmq"
-	"github.com/mateus-sousa-dev/meet-people/app/delivery/web"
 	"github.com/mateus-sousa-dev/meet-people/app/infra"
 	"github.com/mateus-sousa-dev/meet-people/app/middlewares"
-	"github.com/mateus-sousa-dev/meet-people/app/repository"
-	"github.com/mateus-sousa-dev/meet-people/app/usecase"
 	docs "github.com/mateus-sousa-dev/meet-people/docs"
+	"github.com/mateus-sousa-dev/meet-people/internal/emails"
+	"github.com/mateus-sousa-dev/meet-people/internal/events"
+	"github.com/mateus-sousa-dev/meet-people/internal/login"
+	"github.com/mateus-sousa-dev/meet-people/internal/passwordresetconfigs"
+	"github.com/mateus-sousa-dev/meet-people/internal/users"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
@@ -32,22 +33,22 @@ func StartApplication() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mailRepository := repository.NewMailRepository(smtpDialer)
-	emailUsecase := usecase.NewEmailUseCase(mailRepository)
-	emailDelivery := rabbitmq.NewEmailDelivery(rabbitmqChannel, emailUsecase)
+	emailRepository := emails.NewRepository(smtpDialer)
+	sendUseCase := emails.NewSendUseCase(emailRepository)
+	emailDelivery := emails.NewDelivery(rabbitmqChannel, sendUseCase)
 	go func() {
 		err = emailDelivery.StartConsume()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
-	userRepository := repository.NewUserRepository(db)
-	eventRepository := repository.NewEventRepository(rabbitmqChannel)
-	passwordResetConfigRepo := repository.NewPasswordResetConfigRepository(db)
-	userUseCase := usecase.NewUserUseCase(userRepository, eventRepository, passwordResetConfigRepo)
-	userDelivery := web.NewUserDelivery(userUseCase)
-	loginUseCase := usecase.NewLoginUseCase(userRepository)
-	loginDelivery := web.NewLoginDelivery(loginUseCase)
+	userRepository := users.NewRepository(db)
+	eventRepository := events.NewRepository(rabbitmqChannel)
+	passwordResetConfigRepo := passwordresetconfigs.NewRepository(db)
+	writingUseCase := users.NewWritingUseCase(userRepository, eventRepository, passwordResetConfigRepo)
+	userDelivery := users.NewDelivery(writingUseCase)
+	loginUseCase := login.NewLoginUseCase(userRepository)
+	loginDelivery := login.NewDelivery(loginUseCase)
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
