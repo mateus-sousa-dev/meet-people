@@ -1,11 +1,9 @@
-package usecase
+package users
 
 import (
 	"crypto/md5"
 	"fmt"
-	"github.com/mateus-sousa-dev/meet-people/app/domain"
-	"github.com/mateus-sousa-dev/meet-people/app/internal"
-	"github.com/mateus-sousa-dev/meet-people/app/tests/mocks"
+	"github.com/mateus-sousa-dev/meet-people/internal/global"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
@@ -14,7 +12,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	userDto := domain.UserDto{
+	userDto := UserDto{
 		FirstName:       "Mateus",
 		LastName:        "Silva",
 		Email:           "mateus@gmail.com",
@@ -24,10 +22,10 @@ func TestCreateUser(t *testing.T) {
 		Birthday:        839066400,
 		Gender:          "M",
 	}
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Nil(t, err)
 	assert.Equal(t, "Mateus", user.FirstName)
@@ -37,7 +35,7 @@ func TestCreateUser(t *testing.T) {
 	assert.Equal(t, 839066400, user.Birthday)
 	assert.Equal(t, "M", user.Gender)
 	assert.Equal(t, 0, user.Active)
-	timeNow := internal.Now().UTC().Unix()
+	timeNow := global.Now().UTC().Unix()
 	assert.Equal(t, &timeNow, user.CreatedAt)
 	assert.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(strconv.FormatInt(time.Now().Unix(), 10)+"mateus@gmail.com"))), user.PathAccountActivation)
 	assert.Equal(t, "AbCd123456", user.ConfirmPassword)
@@ -46,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestCreateUserInvalid(t *testing.T) {
-	userDto := domain.UserDto{
+	userDto := UserDto{
 		FirstName:       "Mateus",
 		LastName:        "Silva",
 		Email:           "mateus@gmail.com",
@@ -56,17 +54,17 @@ func TestCreateUserInvalid(t *testing.T) {
 		Birthday:        839066400,
 		Gender:          "M",
 	}
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "ConfirmPassword: Should be equal to the Password field", err.Error())
 	assert.Nil(t, user)
 }
 
 func TestCreateUserEmailAlreadyExists(t *testing.T) {
-	userDto := domain.UserDto{
+	userDto := UserDto{
 		FirstName:       "Mateus",
 		LastName:        "Silva",
 		Email:           "mateus@gmail.com",
@@ -76,10 +74,10 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 		Birthday:        839066400,
 		Gender:          "M",
 	}
-	repo := mocks.NewUserRepoEmailAlreadyExistsMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepoEmailAlreadyExistsMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	user, err := useCase.CreateUser(userDto)
 	assert.Equal(t, "email already exists", err.Error())
 	assert.Nil(t, user)
@@ -87,40 +85,40 @@ func TestCreateUserEmailAlreadyExists(t *testing.T) {
 
 func TestValidatePasswordStrengthShort(t *testing.T) {
 	password := "Ab14725"
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
 
 func TestValidatePasswordStrengthNotUpper(t *testing.T) {
 	password := "abcd147258369"
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
 
 func TestValidatePasswordStrengthNotLower(t *testing.T) {
 	password := "ABCD147258369"
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Equal(t, "password is not strong enough", err.Error())
 }
 
 func TestValidatePasswordStrengthValid(t *testing.T) {
 	password := "AbCd147258369"
-	repo := mocks.NewUserRepositoryMock()
-	eventRepo := mocks.NewEventRepositoryMock()
-	passwordResetConfigRepo := mocks.NewPasswordResetConfigRepositoryMock()
-	useCase := NewUserUseCase(repo, eventRepo, passwordResetConfigRepo)
+	repo := NewUserRepositoryMock()
+	eventRepo := NewEventRepositoryMock()
+	passwordResetConfigRepo := NewPasswordResetConfigRepositoryMock()
+	useCase := NewWritingUseCase(repo, eventRepo, passwordResetConfigRepo)
 	err := useCase.validatePasswordStrength(password)
 	assert.Nil(t, err)
 }

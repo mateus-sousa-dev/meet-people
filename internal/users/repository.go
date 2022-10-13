@@ -1,7 +1,6 @@
 package users
 
 import (
-	"github.com/mateus-sousa-dev/meet-people/app/domain"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +30,7 @@ func (u *repository) CreateUser(user *User) (*User, error) {
 
 func (u *repository) FindUserByEmail(email string) *User {
 	var user User
-	u.db.Where(&domain.User{Email: email}).First(&user)
+	u.db.Where(&User{Email: email}).First(&user)
 	if user.ID == 0 {
 		return nil
 	}
@@ -40,7 +39,7 @@ func (u *repository) FindUserByEmail(email string) *User {
 
 func (u *repository) FindUserByPathAccountActivation(path string) *User {
 	var user User
-	u.db.Where(&domain.User{PathAccountActivation: path}).First(&user)
+	u.db.Where(&User{PathAccountActivation: path}).First(&user)
 	if user.ID == 0 {
 		return nil
 	}
