@@ -6,12 +6,21 @@ import (
 	"net/http"
 )
 
-type Delivery struct {
+type Delivery interface {
+	CreateUser(c *gin.Context)
+	ActivateAccount(c *gin.Context)
+	ForgotPassword(c *gin.Context)
+	ValidateUrlPassword(c *gin.Context)
+	ResetForgottenPassword(c *gin.Context)
+	Logged(c *gin.Context)
+}
+
+type delivery struct {
 	writingUseCase WritingUseCase
 }
 
-func NewDelivery(writingUseCase WritingUseCase) *Delivery {
-	return &Delivery{writingUseCase: writingUseCase}
+func NewDelivery(writingUseCase WritingUseCase) Delivery {
+	return &delivery{writingUseCase: writingUseCase}
 }
 
 // CreateUser godoc
@@ -23,7 +32,7 @@ func NewDelivery(writingUseCase WritingUseCase) *Delivery {
 // @Param user body domain.UserDto true "Modelo de usuário"
 // @Success 201 {object} domain.User
 // @Router /api/v1/users [post]
-func (u *Delivery) CreateUser(c *gin.Context) {
+func (u *delivery) CreateUser(c *gin.Context) {
 	var userDto UserDto
 	err := c.ShouldBindJSON(&userDto)
 	if err != nil {
@@ -47,7 +56,7 @@ func (u *Delivery) CreateUser(c *gin.Context) {
 // @Param activationpath query string true "Path de ativação"
 // @Success 201 {string} account was activated successfully
 // @Router /api/v1/activate-account/{activationpath} [get]
-func (u *Delivery) ActivateAccount(c *gin.Context) {
+func (u *delivery) ActivateAccount(c *gin.Context) {
 	activationPath := c.Param("activationpath")
 	err := u.writingUseCase.ActivateAccount(activationPath)
 	if err != nil {
@@ -57,16 +66,7 @@ func (u *Delivery) ActivateAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, "account was activated successfully")
 }
 
-func (u *Delivery) Logged(c *gin.Context) {
-	userID, err := auth.ExtractUserID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, err.Error())
-		return
-	}
-	c.JSON(200, userID)
-}
-
-func (u *Delivery) ForgotPassword(c *gin.Context) {
+func (u *delivery) ForgotPassword(c *gin.Context) {
 	email := c.Query("email")
 	err := u.writingUseCase.ForgotPassword(email)
 	if err != nil {
@@ -76,7 +76,7 @@ func (u *Delivery) ForgotPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, "url to reset password was send to your e-mail")
 }
 
-func (u *Delivery) ValidateUrlPassword(c *gin.Context) {
+func (u *delivery) ValidateUrlPassword(c *gin.Context) {
 	url := c.Param("urlpasswordreset")
 	err := u.writingUseCase.ValidateUrlPassword(url)
 	if err != nil {
@@ -86,7 +86,7 @@ func (u *Delivery) ValidateUrlPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, "url is valid")
 }
 
-func (u *Delivery) ResetForgottenPassword(c *gin.Context) {
+func (u *delivery) ResetForgottenPassword(c *gin.Context) {
 	url := c.Param("urlpasswordreset")
 	var passwordDto PasswordDto
 	err := c.ShouldBindJSON(&passwordDto)
@@ -100,4 +100,14 @@ func (u *Delivery) ResetForgottenPassword(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, "password updated successfully")
+}
+
+// TODO assim que houver uma rota com usuario autenticado, remover esse exemplo.
+func (u *delivery) Logged(c *gin.Context) {
+	userID, err := auth.ExtractUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+	c.JSON(200, userID)
 }

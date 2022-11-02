@@ -49,6 +49,10 @@ func StartApplication() {
 	userDelivery := users.NewDelivery(writingUseCase)
 	loginUseCase := login.NewLoginUseCase(userRepository)
 	loginDelivery := login.NewDelivery(loginUseCase)
+	SetupRoutes(userDelivery, loginDelivery)
+}
+
+func SetupRoutes(userDelivery users.Delivery, loginDelivery login.Delivery) {
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
