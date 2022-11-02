@@ -2,7 +2,7 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mateus-sousa-dev/meet-people/app/auth"
+	"github.com/mateus-sousa-dev/meet-people/internal/auth"
 	"net/http"
 )
 

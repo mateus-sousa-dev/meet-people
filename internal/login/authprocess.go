@@ -1,7 +1,7 @@
 package login
 
 import (
-	"github.com/mateus-sousa-dev/meet-people/app/auth"
+	"github.com/mateus-sousa-dev/meet-people/internal/auth"
 	"github.com/mateus-sousa-dev/meet-people/internal/users"
 	"golang.org/x/crypto/bcrypt"
 )
