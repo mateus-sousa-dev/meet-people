@@ -44,12 +44,7 @@ func (r *repository) GetFriendshipRequestById(friendshipID int64) *Friendship {
 }
 
 func (r *repository) AcceptFriendship(friendship *Friendship) (*Friendship, error) {
-	tx := r.db.Model(
-		&Friendship{},
-	).Where(
-		"id = ?",
-		friendship.ID,
-	).Updates(friendship)
+	tx := r.db.Model(&Friendship{}).Where("id = ?", friendship.ID).Updates(friendship)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

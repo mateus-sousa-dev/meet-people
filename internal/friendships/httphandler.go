@@ -49,6 +49,15 @@ func (d *delivery) RequestFriendship(c *gin.Context) {
 	c.JSON(http.StatusCreated, friendship)
 }
 
+// AcceptFriendship godoc
+// @Summary Accept a Friendship
+// @Description Route to accept a friendship
+// @Tags Friendships
+// @Accept json
+// @Produce json
+// @Param friendshipId query string true "ID da amizade"
+// @Success 200 {object} Friendship
+// @Router /api/v1/friendship/{id} [patch]
 func (d *delivery) AcceptFriendship(c *gin.Context) {
 	loggedUserID, err := auth.ExtractUserID(c)
 	if err != nil {
