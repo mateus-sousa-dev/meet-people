@@ -16,6 +16,10 @@ func (u *UserRepositoryMock) CreateUser(user *User) (*User, error) {
 	return user, nil
 }
 
+func (u *UserRepositoryMock) FindUserById(userId int64) *User {
+	return nil
+}
+
 func (u *UserRepositoryMock) FindUserByEmail(email string) *User {
 	return nil
 }
@@ -41,6 +45,10 @@ func NewUserRepoEmailAlreadyExistsMock() *UserRepoEmailAlreadyExistsMock {
 func (u *UserRepoEmailAlreadyExistsMock) CreateUser(user *User) (*User, error) {
 	user.ID = 1
 	return user, nil
+}
+
+func (u *UserRepoEmailAlreadyExistsMock) FindUserById(userID int64) *User {
+	return nil
 }
 
 func (u *UserRepoEmailAlreadyExistsMock) FindUserByEmail(email string) *User {

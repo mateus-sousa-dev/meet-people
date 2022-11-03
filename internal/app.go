@@ -4,6 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/mateus-sousa-dev/meet-people/internal/emails"
 	"github.com/mateus-sousa-dev/meet-people/internal/events"
+	"github.com/mateus-sousa-dev/meet-people/internal/friendships"
 	"github.com/mateus-sousa-dev/meet-people/internal/infra"
 	"github.com/mateus-sousa-dev/meet-people/internal/login"
 	"github.com/mateus-sousa-dev/meet-people/internal/passwordresetconfigs"
@@ -45,5 +46,8 @@ func StartApplication() {
 	userDelivery := users.NewDelivery(writingUseCase)
 	loginUseCase := login.NewLoginUseCase(userRepository)
 	loginDelivery := login.NewDelivery(loginUseCase)
-	routes.SetupRoutes(userDelivery, loginDelivery)
+	friendshipRepo := friendships.NewRepository(db)
+	friendshipWritingUseCase := friendships.NewWritingUseCase(friendshipRepo, userRepository)
+	friendshipDelivery := friendships.NewDelivery(friendshipWritingUseCase)
+	routes.SetupRoutes(userDelivery, loginDelivery, friendshipDelivery)
 }

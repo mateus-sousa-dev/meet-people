@@ -6,6 +6,7 @@ import (
 
 type Repository interface {
 	CreateUser(user *User) (*User, error)
+	FindUserById(userID int64) *User
 	FindUserByEmail(email string) *User
 	FindUserByPathAccountActivation(path string) *User
 	ActivateAccount(user *User) *User
@@ -26,6 +27,15 @@ func (u *repository) CreateUser(user *User) (*User, error) {
 		return nil, tx.Error
 	}
 	return user, nil
+}
+
+func (u *repository) FindUserById(userID int64) *User {
+	var user User
+	u.db.Where(&User{ID: userID}).First(&user)
+	if user.ID == 0 {
+		return nil
+	}
+	return &user
 }
 
 func (u *repository) FindUserByEmail(email string) *User {

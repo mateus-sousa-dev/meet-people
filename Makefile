@@ -1,7 +1,9 @@
 up:
-	docker-compose up
+	docker-compose down
+	docker-compose up -d
 build:
-	docker-compose up --build
+	docker-compose down
+	docker-compose up --build -d
 test:
 	go test ./...
 test-cover:
