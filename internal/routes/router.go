@@ -11,18 +11,23 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRoutes(userDelivery users.Delivery, loginDelivery login.Delivery, friendshipDelivery friendships.Delivery) {
+type RouterDeliveriesDto struct {
+	UserDelivery       users.Delivery
+	LoginDelivery      login.Delivery
+	FriendshipDelivery friendships.Delivery
+}
+
+func SetupRoutes(routerDeliveriesDto RouterDeliveriesDto) {
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	apiV1Routes := r.Group("/api/v1")
-	apiV1Routes.POST("/users", userDelivery.CreateUser)
-	apiV1Routes.GET("/activate-account/:activationpath", userDelivery.ActivateAccount)
-	apiV1Routes.PATCH("/forgot-password", userDelivery.ForgotPassword)
-	apiV1Routes.GET("/validate-url-password/:urlpasswordreset", userDelivery.ValidateUrlPassword)
-	apiV1Routes.PATCH("/reset-forgotten-password/:urlpasswordreset", userDelivery.ResetForgottenPassword)
-	apiV1Routes.POST("/login", loginDelivery.Exec)
-	apiV1Routes.POST("/friendship", middlewares.Authenticate(friendshipDelivery.RequestFriendship))
-	apiV1Routes.GET("/logged", middlewares.Authenticate(userDelivery.Logged))
+	apiV1Routes.POST("/users", routerDeliveriesDto.UserDelivery.CreateUser)
+	apiV1Routes.GET("/activate-account/:activationpath", routerDeliveriesDto.UserDelivery.ActivateAccount)
+	apiV1Routes.PATCH("/forgot-password", routerDeliveriesDto.UserDelivery.ForgotPassword)
+	apiV1Routes.GET("/validate-url-password/:urlpasswordreset", routerDeliveriesDto.UserDelivery.ValidateUrlPassword)
+	apiV1Routes.PATCH("/reset-forgotten-password/:urlpasswordreset", routerDeliveriesDto.UserDelivery.ResetForgottenPassword)
+	apiV1Routes.POST("/login", routerDeliveriesDto.LoginDelivery.Exec)
+	apiV1Routes.POST("/friendship", middlewares.Authenticate(routerDeliveriesDto.FriendshipDelivery.RequestFriendship))
 	r.Run()
 }

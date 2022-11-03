@@ -49,5 +49,9 @@ func StartApplication() {
 	friendshipRepo := friendships.NewRepository(db)
 	friendshipWritingUseCase := friendships.NewWritingUseCase(friendshipRepo, userRepository)
 	friendshipDelivery := friendships.NewDelivery(friendshipWritingUseCase)
-	routes.SetupRoutes(userDelivery, loginDelivery, friendshipDelivery)
+	routes.SetupRoutes(routes.RouterDeliveriesDto{
+		UserDelivery:       userDelivery,
+		LoginDelivery:      loginDelivery,
+		FriendshipDelivery: friendshipDelivery,
+	})
 }

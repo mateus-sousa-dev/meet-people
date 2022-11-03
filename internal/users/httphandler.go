@@ -2,7 +2,6 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mateus-sousa-dev/meet-people/internal/auth"
 	"net/http"
 )
 
@@ -12,7 +11,6 @@ type Delivery interface {
 	ForgotPassword(c *gin.Context)
 	ValidateUrlPassword(c *gin.Context)
 	ResetForgottenPassword(c *gin.Context)
-	Logged(c *gin.Context)
 }
 
 type delivery struct {
@@ -100,14 +98,4 @@ func (u *delivery) ResetForgottenPassword(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, "password updated successfully")
-}
-
-// TODO assim que houver uma rota com usuario autenticado, remover esse exemplo.
-func (u *delivery) Logged(c *gin.Context) {
-	userID, err := auth.ExtractUserID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, err.Error())
-		return
-	}
-	c.JSON(200, userID)
 }
