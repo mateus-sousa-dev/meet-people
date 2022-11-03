@@ -7,6 +7,7 @@ import (
 
 type WritingUseCase interface {
 	RequestFriendship(friendshipDto FriendshipDto, loggedUserID int64) (*Friendship, error)
+	AcceptFriendship(friendshipID int64, loggedUserID int64) (*Friendship, error)
 }
 
 type writingUseCase struct {
@@ -35,6 +36,25 @@ func (w *writingUseCase) RequestFriendship(friendshipDto FriendshipDto, loggedUs
 		return nil, errors.New("friendship was already requested")
 	}
 	friendship, err = w.repository.RequestFriendship(friendship)
+	if err != nil {
+		return nil, err
+	}
+	return friendship, nil
+}
+
+func (w *writingUseCase) AcceptFriendship(friendshipID int64, loggedUserID int64) (*Friendship, error) {
+	friendship := w.repository.GetFriendshipRequestById(friendshipID)
+	if friendship == nil {
+		return nil, errors.New("friendship id not found")
+	}
+	if loggedUserID != friendship.RequestedID {
+		return nil, errors.New("you should be requested user of friendship you accept")
+	}
+	err := friendship.beAccepted()
+	if err != nil {
+		return nil, err
+	}
+	friendship, err = w.repository.AcceptFriendship(friendship)
 	if err != nil {
 		return nil, err
 	}

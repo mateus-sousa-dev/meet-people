@@ -4,10 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mateus-sousa-dev/meet-people/internal/auth"
 	"net/http"
+	"strconv"
 )
 
 type Delivery interface {
 	RequestFriendship(c *gin.Context)
+	AcceptFriendship(c *gin.Context)
 }
 
 type delivery struct {
@@ -45,4 +47,23 @@ func (d *delivery) RequestFriendship(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, friendship)
+}
+
+func (d *delivery) AcceptFriendship(c *gin.Context) {
+	loggedUserID, err := auth.ExtractUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+	friendshipID, err := strconv.ParseInt(c.Param("friendshipId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	friendship, err := d.writingUseCase.AcceptFriendship(friendshipID, loggedUserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, friendship)
 }

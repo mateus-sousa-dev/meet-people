@@ -15,18 +15,32 @@ type Friendship struct {
 }
 
 type FriendshipDto struct {
+	ID          int64 `json:"id"`
 	RequesterID int64 `json:"requester_id"`
 	RequestedID int64 `json:"requested_id"`
 }
+
+const (
+	PENDING_REQUEST  = 0
+	ACCEPTED_REQUEST = 1
+)
 
 func NewFriendshipRequest(friendshipDto FriendshipDto) (*Friendship, error) {
 	if friendshipDto.RequesterID == friendshipDto.RequestedID {
 		return nil, errors.New("requester user id cannot be equal requested user id")
 	}
 	return &Friendship{
-		ID:          0,
 		RequesterID: friendshipDto.RequesterID,
 		RequestedID: friendshipDto.RequestedID,
 		RequestedAt: global.Now().UTC().Unix(),
 	}, nil
+}
+
+func (f *Friendship) beAccepted() error {
+	if f.Accepted != PENDING_REQUEST {
+		return errors.New("friendship request was already accepted")
+	}
+	f.Accepted = ACCEPTED_REQUEST
+	f.AcceptedAt = global.Now().UTC().Unix()
+	return nil
 }

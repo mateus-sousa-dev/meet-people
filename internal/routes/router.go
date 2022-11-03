@@ -29,5 +29,6 @@ func SetupRoutes(routerDeliveriesDto RouterDeliveriesDto) {
 	apiV1Routes.PATCH("/reset-forgotten-password/:urlpasswordreset", routerDeliveriesDto.UserDelivery.ResetForgottenPassword)
 	apiV1Routes.POST("/login", routerDeliveriesDto.LoginDelivery.Exec)
 	apiV1Routes.POST("/friendship", middlewares.Authenticate(routerDeliveriesDto.FriendshipDelivery.RequestFriendship))
+	apiV1Routes.PATCH("/friendship/:friendshipId", middlewares.Authenticate(routerDeliveriesDto.FriendshipDelivery.AcceptFriendship))
 	r.Run()
 }
