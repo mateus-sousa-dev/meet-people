@@ -5,15 +5,19 @@ import (
 	"net/http"
 )
 
-type Delivery struct {
+type Delivery interface {
+	Exec(c *gin.Context)
+}
+
+type delivery struct {
 	loginUseCase LoginUseCase
 }
 
-func NewDelivery(loginUseCase LoginUseCase) *Delivery {
-	return &Delivery{loginUseCase: loginUseCase}
+func NewDelivery(loginUseCase LoginUseCase) Delivery {
+	return &delivery{loginUseCase: loginUseCase}
 }
 
-func (l *Delivery) Exec(c *gin.Context) {
+func (l *delivery) Exec(c *gin.Context) {
 	var login LoginDto
 	err := c.ShouldBindJSON(&login)
 	if err != nil {

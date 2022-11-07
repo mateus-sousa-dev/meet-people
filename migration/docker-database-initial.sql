@@ -22,3 +22,14 @@ create table password_reset_configs(
    updated_at int,
    foreign key(users_id) references users(id)
 );
+
+create table friendships(
+    id serial primary key,
+    requester_id int,
+    requested_id int,
+    requested_at int,
+    accepted_at int,
+    accepted int,
+    foreign key(requester_id) references users(id),
+    foreign key(requested_id) references users(id)
+);
