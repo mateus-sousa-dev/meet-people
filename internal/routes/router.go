@@ -30,5 +30,6 @@ func SetupRoutes(routerDeliveriesDto RouterDeliveriesDto) {
 	apiV1Routes.POST("/login", routerDeliveriesDto.LoginDelivery.Exec)
 	apiV1Routes.POST("/friendship", middlewares.Authenticate(routerDeliveriesDto.FriendshipDelivery.RequestFriendship))
 	apiV1Routes.PATCH("/friendship/:friendshipId", middlewares.Authenticate(routerDeliveriesDto.FriendshipDelivery.AcceptFriendship))
+	apiV1Routes.GET("/friends", middlewares.Authenticate(routerDeliveriesDto.UserDelivery.GetMyFriends))
 	r.Run()
 }

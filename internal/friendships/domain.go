@@ -3,12 +3,15 @@ package friendships
 import (
 	"errors"
 	"github.com/mateus-sousa-dev/meet-people/internal/global"
+	"github.com/mateus-sousa-dev/meet-people/internal/users"
 )
 
 type Friendship struct {
 	ID          int64
-	RequesterID int64
-	RequestedID int64
+	RequesterID int64 `gorm:"column:requester_id;type:int REFERENCES users(id);notnull"`
+	Requester   *users.User
+	RequestedID int64 `gorm:"column:requested_id;type:int REFERENCES users(id);notnull"`
+	Requested   *users.User
 	RequestedAt int64
 	AcceptedAt  int64
 	Accepted    int64

@@ -23,7 +23,7 @@ type writingUseCase struct {
 	passwordResetConfigRepo passwordresetconfigs.Repository
 }
 
-func NewWritingUseCase(repo Repository, eventRepository events.Repository, passwordResetConfigRepo passwordresetconfigs.Repository) *writingUseCase {
+func NewWritingUseCase(repo Repository, eventRepository events.Repository, passwordResetConfigRepo passwordresetconfigs.Repository) WritingUseCase {
 	return &writingUseCase{repo: repo, eventRepository: eventRepository, passwordResetConfigRepo: passwordResetConfigRepo}
 }
 

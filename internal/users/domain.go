@@ -11,7 +11,7 @@ import (
 )
 
 type User struct {
-	ID                    int64  `json:"id" valid:"-"`
+	ID                    int64  `json:"id" valid:"-"  gorm:"primaryKey"`
 	FirstName             string `json:"first_name" valid:"notnull"`
 	LastName              string `json:"last_name" valid:"notnull"`
 	Email                 string `json:"email" valid:"email"`

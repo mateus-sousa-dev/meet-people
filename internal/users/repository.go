@@ -11,6 +11,7 @@ type Repository interface {
 	FindUserByPathAccountActivation(path string) *User
 	ActivateAccount(user *User) *User
 	ChangePassword(password string, userID int64) error
+	GetMyFriends(loggedUserID int64) []*User
 }
 
 type repository struct {
@@ -67,4 +68,13 @@ func (u *repository) ChangePassword(password string, userID int64) error {
 		return tx.Error
 	}
 	return nil
+}
+
+func (u *repository) GetMyFriends(loggedUserID int64) []*User {
+	var users []*User
+	u.db.Joins(
+		"INNER JOIN DFSGSDGDS ON users.id = friendships.requester_id OR users.id = friendships.requested_id",
+	).Find(users)
+
+	return users
 }

@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mateus-sousa-dev/meet-people/internal/auth"
 	"net/http"
 )
 
@@ -11,14 +12,16 @@ type Delivery interface {
 	ForgotPassword(c *gin.Context)
 	ValidateUrlPassword(c *gin.Context)
 	ResetForgottenPassword(c *gin.Context)
+	GetMyFriends(c *gin.Context)
 }
 
 type delivery struct {
 	writingUseCase WritingUseCase
+	readingUseCase ReadingUseCase
 }
 
-func NewDelivery(writingUseCase WritingUseCase) Delivery {
-	return &delivery{writingUseCase: writingUseCase}
+func NewDelivery(writingUseCase WritingUseCase, readingUseCase ReadingUseCase) Delivery {
+	return &delivery{writingUseCase: writingUseCase, readingUseCase: readingUseCase}
 }
 
 // CreateUser godoc
@@ -98,4 +101,14 @@ func (u *delivery) ResetForgottenPassword(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, "password updated successfully")
+}
+
+func (u *delivery) GetMyFriends(c *gin.Context) {
+	loggedUserID, err := auth.ExtractUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+	users := u.readingUseCase.GetMyFriends(loggedUserID)
+	c.JSON(http.StatusOK, users)
 }
